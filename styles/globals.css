@@ -1,0 +1,45 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.square {
+  height: 5rem;
+  width: 5rem;
+  position: relative;
+}
+.file {
+  display: flex;
+  flex-direction: column;
+}
+.table {
+  display: flex;
+  border: solid 2px black;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.white {
+  background-color: rgb(220, 224, 224);
+}
+.black {
+  background-color: #485b63;
+}
+.highlight {
+  filter: brightness(45%);
+}
