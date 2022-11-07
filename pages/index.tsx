@@ -55,8 +55,8 @@ const Home: NextPage = () => {
     e6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
     e7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
     e8: { piece: "kingBlack", type: "king", highlighted: false, canBeAttacked: false, color: "black" },
-    f1: { piece: "bishopWhite", type: "bishop", highlighted: false, canBeAttacked: false, color: "black" },
-    f2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
+    f1: { piece: "bishopWhite", type: "bishop", highlighted: false, canBeAttacked: false, color: "white" },
+    f2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
     f3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
     f4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
     f5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
@@ -80,6 +80,7 @@ const Home: NextPage = () => {
     h7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
     h8: { piece: "rookBlack", type: "rook", highlighted: false, canBeAttacked: false, color: "black" },
   });
+  const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const highliteSquares = ({ squares }: { squares: string[] }) => {
     const highlitedSquares: ITableState = {};
     for (let i of squares) {
@@ -89,12 +90,34 @@ const Home: NextPage = () => {
       return { ...oldTable, ...highlitedSquares };
     });
   };
+  const functionSetSelectedPiece = (square: ITableState) => {
+    setSelectedPiece(square);
+  };
   const unhilightAllSquares = () => {
     const newState: ITableState = {};
     for (let i in tableState) {
       newState[i] = { ...tableState[i], highlighted: false };
     }
     setTableState(newState);
+  };
+  const movePieceToSquare = (square: string) => {
+    const emptySquare = {
+      [Object.keys(selectedPiece)[0]]: {
+        piece: null,
+        type: null,
+        highlighted: false,
+        canBeAttacked: false,
+        color: null,
+      },
+    };
+    const newSquare = {
+      [square]: {
+        ...selectedPiece[Object.keys(selectedPiece)[0]],
+      },
+    };
+    setTableState((oldState) => {
+      return { ...oldState, ...emptySquare, ...newSquare };
+    });
   };
   return (
     <>
@@ -116,6 +139,9 @@ const Home: NextPage = () => {
                       unhilightAllSquares={unhilightAllSquares}
                       highliteSquares={highliteSquares}
                       isHighlited={tableState[letter + (8 - squareIndex)].highlighted}
+                      setSelectedPiece={functionSetSelectedPiece}
+                      selectedPiece={selectedPiece}
+                      movePieceToSquare={movePieceToSquare}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (
                         <Image
@@ -141,10 +167,26 @@ interface IOnClickSquare {
   table: ITableState;
   highliteSquares: ({ squares }: { squares: string[] }) => void;
   unhilightAllSquares: () => void;
+  setSelectedPiece: (square: ITableState) => void;
+  selectedPiece: ITableState;
+  movePieceToSquare: (square: string) => void;
 }
-const onClickSquare = ({ square, table, highliteSquares, unhilightAllSquares }: IOnClickSquare) => {
+const onClickSquare = ({
+  square,
+  table,
+  highliteSquares,
+  unhilightAllSquares,
+  setSelectedPiece,
+  selectedPiece,
+  movePieceToSquare,
+}: IOnClickSquare) => {
   unhilightAllSquares();
+  if (square[Object.keys(square)[0]].highlighted && square[Object.keys(square)[0]].piece === null) {
+    movePieceToSquare(Object.keys(square)[0]);
+    return;
+  }
   if (square[Object.keys(square)[0]].type === "pawn") {
+    setSelectedPiece(square);
     const PAWN_STARTING_POSITIONS = [
       "a2",
       "a7",
@@ -163,21 +205,35 @@ const onClickSquare = ({ square, table, highliteSquares, unhilightAllSquares }: 
       "h2",
       "h7",
     ];
+    const file = Object.keys(square)[0].split("")[0];
+    const row = +Object.keys(square)[0].split("")[1];
     if (PAWN_STARTING_POSITIONS.includes(Object.keys(square)[0])) {
-      const file = Object.keys(square)[0].split("")[0];
-      const row = +Object.keys(square)[0].split("")[1];
       if (square[Object.keys(square)[0]].color === "white") {
-        highliteSquares({ squares: [file + (row + 1), file + (row + 2)] });
+        if (table[file + (row + 2)].type === null) {
+          if (table[file + (row + 1)].type === null) {
+            highliteSquares({ squares: [file + (row + 1), file + (row + 2)] });
+          }
+        } else {
+          highliteSquares({ squares: [file + (row + 1)] });
+        }
       } else {
-        highliteSquares({ squares: [file + (row - 1), file + (row - 2)] });
+        if (table[file + (row - 2)].type === null) {
+          if (table[file + (row - 1)].type === null) {
+            highliteSquares({ squares: [file + (row - 1), file + (row - 2)] });
+          }
+        } else {
+          highliteSquares({ squares: [file + (row - 1)] });
+        }
       }
     } else {
-      const file = Object.keys(square)[0].split("")[0];
-      const row = +Object.keys(square)[0].split("")[1];
       if (square[Object.keys(square)[0]].color === "white") {
-        highliteSquares({ squares: [file + (row + 1)] });
+        if (table[file + (row + 1)].type === null) {
+          highliteSquares({ squares: [file + (row + 1)] });
+        }
       } else {
-        highliteSquares({ squares: [file + (row - 1)] });
+        if (table[file + (row - 1)].type === null) {
+          highliteSquares({ squares: [file + (row - 1)] });
+        }
       }
     }
   }
@@ -201,6 +257,9 @@ interface ISquareComponent {
   highliteSquares: ({ squares }: { squares: string[] }) => void;
   unhilightAllSquares: () => void;
   isHighlited: boolean;
+  setSelectedPiece: (square: ITableState) => void;
+  selectedPiece: ITableState;
+  movePieceToSquare: (square: string) => void;
 }
 const Square = ({
   file,
@@ -214,6 +273,9 @@ const Square = ({
   highliteSquares,
   unhilightAllSquares,
   isHighlited,
+  setSelectedPiece,
+  selectedPiece,
+  movePieceToSquare,
 }: ISquareComponent) => {
   return (
     <>
@@ -221,7 +283,17 @@ const Square = ({
         className={`square ${(YCoordonate + XCoordonate) % 2 === 0 ? "white" : "black"} ${
           isHighlited ? "highlight" : ""
         } `}
-        onClick={() => onClick({ square, table: state, highliteSquares, unhilightAllSquares })}
+        onClick={() =>
+          onClick({
+            movePieceToSquare,
+            selectedPiece,
+            square,
+            table: state,
+            highliteSquares,
+            unhilightAllSquares,
+            setSelectedPiece,
+          })
+        }
       >
         {children}
       </div>
