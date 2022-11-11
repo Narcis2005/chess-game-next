@@ -1,71 +1,4 @@
-import { ITableState } from "./interfaces";
-
-export const InitialTableState: ITableState = {
-  a1: { piece: "rookWhite", type: "rook", highlighted: false, canBeAttacked: false, color: "white" },
-  a2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  a3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  a4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  a5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  a6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  a7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  a8: { piece: "rookBlack", type: "rook", highlighted: false, canBeAttacked: false, color: "black" },
-  b1: { piece: "knightWhite", type: "knight", highlighted: false, canBeAttacked: false, color: "white" },
-  b2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  b3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  b4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  b5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  b6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  b7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  b8: { piece: "knightBlack", type: "knight", highlighted: false, canBeAttacked: false, color: "black" },
-  c1: { piece: "bishopWhite", type: "bishop", highlighted: false, canBeAttacked: false, color: "white" },
-  c2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  c3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  c4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  c5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  c6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  c7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  c8: { piece: "bishopBlack", type: "bishop", highlighted: false, canBeAttacked: false, color: "black" },
-  d1: { piece: "queenWhite", type: "queen", highlighted: false, canBeAttacked: false, color: "white" },
-  d2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  d3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  d4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  d5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  d6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  d7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  d8: { piece: "queenBlack", type: "queen", highlighted: false, canBeAttacked: false, color: "black" },
-  e1: { piece: "kingWhite", type: "king", highlighted: false, canBeAttacked: false, color: "white" },
-  e2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  e3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  e4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  e5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  e6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  e7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  e8: { piece: "kingBlack", type: "king", highlighted: false, canBeAttacked: false, color: "black" },
-  f1: { piece: "bishopWhite", type: "bishop", highlighted: false, canBeAttacked: false, color: "white" },
-  f2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  f3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  f4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  f5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  f6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  f7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  f8: { piece: "bishopBlack", type: "bishop", highlighted: false, canBeAttacked: false, color: "black" },
-  g1: { piece: "knightWhite", type: "knight", highlighted: false, canBeAttacked: false, color: "white" },
-  g2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  g3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  g4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  g5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  g6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  g7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  g8: { piece: "knightBlack", type: "knight", highlighted: false, canBeAttacked: false, color: "black" },
-  h1: { piece: "rookWhite", type: "rook", highlighted: false, canBeAttacked: false, color: "white" },
-  h2: { piece: "pawnWhite", type: "pawn", highlighted: false, canBeAttacked: false, color: "white" },
-  h3: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  h4: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  h5: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  h6: { piece: null, type: null, highlighted: false, canBeAttacked: false, color: null },
-  h7: { piece: "pawnBlack", type: "pawn", highlighted: false, canBeAttacked: false, color: "black" },
-  h8: { piece: "rookBlack", type: "rook", highlighted: false, canBeAttacked: false, color: "black" },
-};
+import { Color, ICreateSquare, ISquare, ITableState, Piece } from "./interfaces";
 export const FILE_LETTER = ["a", "b", "c", "d", "e", "f", "g", "h"];
 export const PAWN_STARTING_POSITIONS = [
   "a2",
@@ -85,3 +18,71 @@ export const PAWN_STARTING_POSITIONS = [
   "h2",
   "h7",
 ];
+
+const CreateInitialState = (): ITableState => {
+  const initialState: ITableState = {};
+  for (let i = 1; i <= 8; i++) {
+    for (let j = 1; j <= 8; j++) {
+      const fileLetter = FILE_LETTER[i - 1];
+      const square = fileLetter + j;
+      initialState[square] = createSquare({
+        piece: null,
+        type: null,
+        highlighted: false,
+        canBeAttacked: false,
+        color: null,
+      });
+    }
+  }
+  return initialState;
+};
+
+export const createSquare = ({ piece, type, highlighted, canBeAttacked, color }: ICreateSquare): ISquare => {
+  return {
+    piece: piece,
+    type: type,
+    color: color,
+    highlighted: highlighted === true ? true : false, //because it can be null
+    canBeAttacked: canBeAttacked === true ? true : false, //because it can be null
+  };
+};
+const initialTablePiecePositions: ITableState = {
+  a1: createSquare({ piece: "rookWhite", type: Piece.rook, color: Color.white }),
+  d4: createSquare({ piece: "queenWhite", type: Piece.queen, color: Color.white }),
+
+  a2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  a7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  a8: createSquare({ piece: "rookBlack", type: Piece.rook, color: Color.black }),
+  b1: createSquare({ piece: "knightWhite", type: Piece.knight, color: Color.white }),
+  b2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  b7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  b8: createSquare({ piece: "knightBlack", type: Piece.knight, color: Color.black }),
+  c1: createSquare({ piece: "bishopWhite", type: Piece.bishop, color: Color.white }),
+  c2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  c7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  c8: createSquare({ piece: "bishopBlack", type: Piece.bishop, color: Color.black }),
+  d1: createSquare({ piece: "queenWhite", type: Piece.queen, color: Color.white }),
+  d2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  d7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  d8: createSquare({ piece: "queenBlack", type: Piece.queen, color: Color.black }),
+  e1: createSquare({ piece: "kingWhite", type: Piece.king, color: Color.white }),
+  e2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  e7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  e8: createSquare({ piece: "kingBlack", type: Piece.king, color: Color.black }),
+  f1: createSquare({ piece: "bishopWhite", type: Piece.bishop, color: Color.white }),
+  f2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  f7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  f8: createSquare({ piece: "bishopBlack", type: Piece.bishop, color: Color.black }),
+  g1: createSquare({ piece: "knightWhite", type: Piece.knight, color: Color.white }),
+  g2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  g7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  g8: createSquare({ piece: "knightBlack", type: Piece.knight, color: Color.black }),
+  h1: createSquare({ piece: "rookWhite", type: Piece.rook, color: Color.white }),
+  h2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
+  h7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
+  h8: createSquare({ piece: "rookBlack", type: Piece.rook, color: Color.black }),
+};
+export const InitialTableState: ITableState = {
+  ...CreateInitialState(),
+  ...initialTablePiecePositions,
+};

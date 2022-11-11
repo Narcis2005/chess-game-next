@@ -4,14 +4,15 @@ import { useState } from "react";
 import Square from "../components/Square";
 import "../styles/home.module.css";
 import { FILE_LETTER, InitialTableState } from "../utils/constants";
-import { ITableState, ITurnState } from "../utils/interfaces";
+import { Color, ITableState } from "../utils/interfaces";
 import File from "../components/File";
 const Home: NextPage = () => {
   const [tableState, setTableState] = useState<ITableState>(InitialTableState);
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
-  const [turn, setTurn] = useState<ITurnState>("white");
+  const [turn, setTurn] = useState<Color>(Color.white);
 
-  const highliteSquares = ({ squares }: { squares: string[] }) => {
+  const highlightSquares = (squares: string[] | null) => {
+    if (squares === null) return;
     const highlitedSquares: ITableState = {};
     for (let i of squares) {
       highlitedSquares[i] = { ...tableState[i], highlighted: true };
@@ -20,15 +21,25 @@ const Home: NextPage = () => {
       return { ...oldTable, ...highlitedSquares };
     });
   };
+  const highlightAttackingSquares = (squares: string[] | null) => {
+    if (squares === null) return;
 
+    const attackHighlitedSquares: ITableState = {};
+    for (let i of squares) {
+      attackHighlitedSquares[i] = { ...tableState[i], canBeAttacked: true };
+    }
+    setTableState((oldTable) => {
+      return { ...oldTable, ...attackHighlitedSquares };
+    });
+  };
   const functionSetSelectedPiece = (square: ITableState) => {
     setSelectedPiece(square);
   };
 
-  const unhilightAllSquares = () => {
+  const unHilightAllSquares = () => {
     const newState: ITableState = {};
     for (let i in tableState) {
-      newState[i] = { ...tableState[i], highlighted: false };
+      newState[i] = { ...tableState[i], highlighted: false, canBeAttacked: false };
     }
     setTableState(newState);
   };
@@ -54,7 +65,7 @@ const Home: NextPage = () => {
   };
   const changeTurn = () => {
     setTurn((oldTurn) => {
-      return oldTurn === "black" ? "white" : "black";
+      return oldTurn === Color.black ? Color.white : Color.black;
     });
   };
   return (
@@ -72,16 +83,18 @@ const Home: NextPage = () => {
                       YCoordonate={fileIndex + 1}
                       XCoordonate={squareIndex + 1}
                       isHighlited={tableState[letter + (8 - squareIndex)].highlighted}
+                      isAttacked={tableState[letter + (8 - squareIndex)].canBeAttacked}
                       onClickSquareProps={{
                         movePieceToSquare: movePieceToSquare,
                         square: { [letter + (8 - squareIndex)]: tableState[letter + (8 - squareIndex)] },
                         table: tableState,
                         setSelectedPiece: functionSetSelectedPiece,
                         selectedPiece: selectedPiece,
-                        highliteSquares: highliteSquares,
-                        unhilightAllSquares: unhilightAllSquares,
+                        highlightSquares: highlightSquares,
+                        unHilightAllSquares: unHilightAllSquares,
                         turn: turn,
                         changeTurn: changeTurn,
+                        highlightAttackingSquares: highlightAttackingSquares,
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (

@@ -7,14 +7,23 @@ interface ISquareComponent {
   children?: React.ReactNode;
   isHighlited: boolean;
   onClickSquareProps: IOnClickSquare;
+  isAttacked: boolean;
 }
-const Square = ({ file, YCoordonate, XCoordonate, children, onClickSquareProps, isHighlited }: ISquareComponent) => {
+const Square = ({
+  file,
+  YCoordonate,
+  XCoordonate,
+  children,
+  onClickSquareProps,
+  isHighlited,
+  isAttacked,
+}: ISquareComponent) => {
   return (
     <>
       <div
         className={`square ${(YCoordonate + XCoordonate) % 2 === 0 ? "white" : "black"} ${
           isHighlited ? "highlight" : ""
-        } `}
+        } ${isAttacked ? "attacked" : ""}`}
         onClick={() =>
           onClickSquare({
             ...onClickSquareProps,

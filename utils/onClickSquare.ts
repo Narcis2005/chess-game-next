@@ -1,122 +1,70 @@
-import { PAWN_STARTING_POSITIONS } from "./constants";
-import { IOnClickSquare } from "./interfaces";
+import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
+import { Color, FileNumber, IOnClickSquare, Piece } from "./interfaces";
+import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
+import { getPawnAttackingMoves, GetPawnMoves } from "./Pawn";
+import { getQueenAttackingMoves, getQueenMoves } from "./Queen";
+import { getRookAttackingMoves, getRookMoves } from "./rook";
 
 const onClickSquare = ({
   square,
   table,
-  highliteSquares,
-  unhilightAllSquares,
+  highlightAttackingSquares,
+  unHilightAllSquares,
+  highlightSquares,
   setSelectedPiece,
   selectedPiece,
   movePieceToSquare,
   turn,
   changeTurn,
 }: IOnClickSquare) => {
-  unhilightAllSquares();
+  unHilightAllSquares();
 
   const squareName = Object.keys(square)[0];
-  if (square[squareName].highlighted && square[squareName].piece === null) {
+  if (
+    (square[squareName].highlighted && square[squareName].piece === null) || //if piece can go to square (because is highlighted)
+    (square[squareName].canBeAttacked && square[squareName].piece !== null && square[squareName].color !== turn) //if piece can capture piece
+  ) {
     movePieceToSquare(squareName);
     changeTurn();
     return;
   }
   setSelectedPiece(square);
-
-  const turnCoeficient = turn === "black" ? 1 : -1;
+  const turnCoeficient = turn === Color.black ? 1 : -1;
   const file = squareName.split("")[0];
   const row = +squareName.split("")[1];
 
-  interface IFileNumber {
-    [key: string]: number;
-  }
-  interface INumberFile {
-    [key: number]: string;
-  }
-  const fileNumber: IFileNumber = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 };
-  const numberFile: INumberFile = { 1: "a", 2: "b", 3: "c", 4: "d", 5: "e", 6: "f", 7: "g", 8: "h" };
-  if (square[squareName].type === "pawn" && square[squareName].color === turn) {
-    if (!PAWN_STARTING_POSITIONS.includes(squareName)) {
-      if (table[file + (row + -1 * turnCoeficient)].type === null) {
-        highliteSquares({ squares: [file + (row + -1 * turnCoeficient)] });
-      }
-      return;
-    }
-
-    if (table[file + (row + -2 * turnCoeficient)]?.type === null) {
-      if (table[file + (row + -1 * turnCoeficient)]?.type === null) {
-        highliteSquares({ squares: [file + (row + -1 * turnCoeficient), file + (row + -2 * turnCoeficient)] });
-      }
-    } else {
-      highliteSquares({ squares: [file + (row + -1 * turnCoeficient)] });
-    }
-  } else if (square[squareName].type === "knight" && square[squareName].color === turn) {
-    const possibleMoves = [];
-
-    for (let i = -1; i < 2; i += 2) {
-      for (let j = -1; j < 2; j += 2) {
-        const verticalMove = { x: fileNumber[file] + j, y: row + i * 2 };
-        const horizontalMove = { x: fileNumber[file] + i * 2, y: row + j };
-
-        if (table[numberFile[verticalMove.x] + verticalMove.y]?.type === null) {
-          possibleMoves.push(numberFile[verticalMove.x] + verticalMove.y);
-        }
-
-        if (table[numberFile[horizontalMove.x] + horizontalMove.y]?.type === null) {
-          possibleMoves.push(numberFile[horizontalMove.x] + horizontalMove.y);
-        }
-      }
-    }
-    highliteSquares({ squares: possibleMoves });
-  } else if (square[squareName].type === "bishop" && square[squareName].color === turn) {
-    const possibleMoves = [];
-    const initialX = fileNumber[file];
-    const initialY = row;
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX + i] + (initialY + i)]?.type === null) {
-        possibleMoves.push(numberFile[initialX + i] + (initialY + i));
-      } else break;
-    }
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX + i] + (initialY - i)]?.type === null) {
-        possibleMoves.push(numberFile[initialX + i] + (initialY - i));
-      } else break;
-    }
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX - i] + (initialY - i)]?.type === null) {
-        possibleMoves.push(numberFile[initialX - i] + (initialY - i));
-      } else break;
-    }
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX - i] + (initialY + i)]?.type === null) {
-        possibleMoves.push(numberFile[initialX - i] + (initialY + i));
-      } else break;
-    }
-    highliteSquares({ squares: possibleMoves });
-  } else if (square[squareName].type === "rook" && square[squareName].color === turn) {
-    const possibleMoves = [];
-    const initialX = fileNumber[file];
-    const initialY = row;
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX - i] + initialY]?.type === null) {
-        possibleMoves.push(numberFile[initialX - i] + initialY);
-      } else break;
-    }
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX + i] + initialY]?.type === null) {
-        possibleMoves.push(numberFile[initialX + i] + initialY);
-      } else break;
-    }
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX] + (initialY + i)]?.type === null) {
-        possibleMoves.push(numberFile[initialX] + (initialY + i));
-      } else break;
-    }
-    for (let i = 1; i < 8; i++) {
-      if (table[numberFile[initialX] + (initialY - i)]?.type === null) {
-        possibleMoves.push(numberFile[initialX] + (initialY - i));
-      } else break;
-    }
-    highliteSquares({ squares: possibleMoves });
+  if (square[squareName].type === Piece.pawn && square[squareName].color === turn) {
+    const squares = GetPawnMoves({ table, file, row, turnCoeficient, squareName });
+    const attackingSquares = getPawnAttackingMoves({
+      table,
+      file,
+      row,
+      turnCoeficient,
+      squareName,
+      color: square[squareName].color,
+    });
+    highlightAttackingSquares(attackingSquares);
+    highlightSquares(squares);
+  } else if (square[squareName].type === Piece.knight && square[squareName].color === turn) {
+    const squares = getKnightMoves({ table, file, row });
+    const attackingSquares = getKnightAttackingMoves({ table, file, row, color: square[squareName].color });
+    highlightAttackingSquares(attackingSquares);
+    highlightSquares(squares);
+  } else if (square[squareName].type === Piece.bishop && square[squareName].color === turn) {
+    const squares = getBishopMoves({ table, file, row });
+    const attackingSquares = getBishopAttackingMoves({ table, file, row, color: square[squareName].color });
+    highlightAttackingSquares(attackingSquares);
+    highlightSquares(squares);
+  } else if (square[squareName].type === Piece.rook && square[squareName].color === turn) {
+    const squares = getRookMoves({ table, file, row });
+    const attackingSquares = getRookAttackingMoves({ table, file, row, color: square[squareName].color });
+    highlightAttackingSquares(attackingSquares);
+    highlightSquares(squares);
+  } else if (square[squareName].type === Piece.queen && square[squareName].color === turn) {
+    const squares = getQueenMoves({ table, file, row });
+    const attackingSquares = getQueenAttackingMoves({ table, file, row, color: square[squareName].color });
+    highlightAttackingSquares(attackingSquares);
+    highlightSquares(squares);
   }
 };
 export default onClickSquare;
