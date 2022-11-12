@@ -16,6 +16,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookAttac
   const initialY = row;
   for (let i = 1; i < 8; i++) {
     if (
+      table[FILE_LETTER[initialX - i - 1] + initialY] &&
       table[FILE_LETTER[initialX - i - 1] + initialY]?.type !== null &&
       table[FILE_LETTER[initialX - i - 1] + initialY]?.color !== color
     ) {
@@ -25,6 +26,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookAttac
   }
   for (let i = 1; i < 8; i++) {
     if (
+      table[FILE_LETTER[initialX + i - 1] + initialY] &&
       table[FILE_LETTER[initialX + i - 1] + initialY]?.type !== null &&
       table[FILE_LETTER[initialX + i - 1] + initialY]?.color !== color
     ) {
@@ -34,6 +36,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookAttac
   }
   for (let i = 1; i < 8; i++) {
     if (
+      table[FILE_LETTER[initialX - 1] + (initialY + i)] &&
       table[FILE_LETTER[initialX - 1] + (initialY + i)]?.type !== null &&
       table[FILE_LETTER[initialX - 1] + (initialY + i)]?.color !== color
     ) {
@@ -43,6 +46,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookAttac
   }
   for (let i = 1; i < 8; i++) {
     if (
+      table[FILE_LETTER[initialX - 1] + (initialY - i)] &&
       table[FILE_LETTER[initialX - 1] + (initialY - i)]?.type !== null &&
       table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color !== color
     ) {

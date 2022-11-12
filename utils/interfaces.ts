@@ -24,15 +24,15 @@ export enum FileNumber {
 export interface ICreateSquare {
   piece: string | null;
   type: Piece | null;
-  highlighted?: boolean;
-  canBeAttacked?: boolean;
+  isHighlighted?: boolean;
+  isAttacked?: boolean;
   color: Color | null;
 }
 export interface ISquare {
   piece: string | null;
   type: Piece | null;
-  highlighted: boolean;
-  canBeAttacked: boolean;
+  isHighlighted: boolean;
+  isAttacked: boolean;
   color: Color | null;
 }
 export interface ITableState {
@@ -49,4 +49,5 @@ export interface IOnClickSquare {
   turn: Color;
   changeTurn: () => void;
   highlightAttackingSquares: (squares: string[] | null) => void;
+  isCheck: boolean;
 }

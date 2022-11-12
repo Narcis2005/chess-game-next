@@ -1,37 +1,47 @@
 import type { NextPage } from "next";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Square from "../components/Square";
 import "../styles/home.module.css";
 import { FILE_LETTER, InitialTableState } from "../utils/constants";
-import { Color, ITableState } from "../utils/interfaces";
+import { Color, ITableState, Piece } from "../utils/interfaces";
 import File from "../components/File";
+import { checkIfCheck, getAllAttackingMoves } from "../utils/generalFunctions";
 const Home: NextPage = () => {
   const [tableState, setTableState] = useState<ITableState>(InitialTableState);
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
-
+  const [isCheck, setIsCheck] = useState(false);
   const highlightSquares = (squares: string[] | null) => {
     if (squares === null) return;
     const highlitedSquares: ITableState = {};
     for (let i of squares) {
-      highlitedSquares[i] = { ...tableState[i], highlighted: true };
+      highlitedSquares[i] = { ...tableState[i], isHighlighted: true };
     }
     setTableState((oldTable) => {
       return { ...oldTable, ...highlitedSquares };
     });
   };
+
+  useEffect(() => {
+    setCheck();
+  }, [turn]);
+
+  const setCheck = () => {
+    if (checkIfCheck({ table: tableState, color: turn })) setIsCheck(true);
+    else setIsCheck(false);
+  };
   const highlightAttackingSquares = (squares: string[] | null) => {
     if (squares === null) return;
-
     const attackHighlitedSquares: ITableState = {};
     for (let i of squares) {
-      attackHighlitedSquares[i] = { ...tableState[i], canBeAttacked: true };
+      attackHighlitedSquares[i] = { ...tableState[i], isAttacked: true };
     }
     setTableState((oldTable) => {
       return { ...oldTable, ...attackHighlitedSquares };
     });
   };
+
   const functionSetSelectedPiece = (square: ITableState) => {
     setSelectedPiece(square);
   };
@@ -39,7 +49,7 @@ const Home: NextPage = () => {
   const unHilightAllSquares = () => {
     const newState: ITableState = {};
     for (let i in tableState) {
-      newState[i] = { ...tableState[i], highlighted: false, canBeAttacked: false };
+      newState[i] = { ...tableState[i], isHighlighted: false, isAttacked: false };
     }
     setTableState(newState);
   };
@@ -49,8 +59,8 @@ const Home: NextPage = () => {
       [Object.keys(selectedPiece)[0]]: {
         piece: null,
         type: null,
-        highlighted: false,
-        canBeAttacked: false,
+        isHighlighted: false,
+        isAttacked: false,
         color: null,
       },
     };
@@ -82,8 +92,8 @@ const Home: NextPage = () => {
                       file={letter}
                       YCoordonate={fileIndex + 1}
                       XCoordonate={squareIndex + 1}
-                      isHighlited={tableState[letter + (8 - squareIndex)].highlighted}
-                      isAttacked={tableState[letter + (8 - squareIndex)].canBeAttacked}
+                      isHighlited={tableState[letter + (8 - squareIndex)].isHighlighted}
+                      isAttacked={tableState[letter + (8 - squareIndex)].isAttacked}
                       onClickSquareProps={{
                         movePieceToSquare: movePieceToSquare,
                         square: { [letter + (8 - squareIndex)]: tableState[letter + (8 - squareIndex)] },
@@ -95,6 +105,7 @@ const Home: NextPage = () => {
                         turn: turn,
                         changeTurn: changeTurn,
                         highlightAttackingSquares: highlightAttackingSquares,
+                        isCheck: isCheck,
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (
