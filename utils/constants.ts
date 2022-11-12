@@ -24,7 +24,7 @@ const CreateInitialState = (): ITableState => {
   for (let i = 1; i <= 8; i++) {
     for (let j = 1; j <= 8; j++) {
       const fileLetter = FILE_LETTER[i - 1];
-      const square = fileLetter + j;
+      const square = `${fileLetter}${j}`;
       initialState[square] = createSquare({
         piece: null,
         type: null,
@@ -48,10 +48,6 @@ export const createSquare = ({ piece, type, isHighlighted, isAttacked, color }: 
 };
 const initialTablePiecePositions: ITableState = {
   a1: createSquare({ piece: "rookWhite", type: Piece.rook, color: Color.white }),
-  // e4: createSquare({ piece: "queenWhite", type: Piece.queen, color: Color.white }),
-  // c6: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
-  // f6: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
-
   a2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
   a7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
   a8: createSquare({ piece: "rookBlack", type: Piece.rook, color: Color.black }),
@@ -70,8 +66,6 @@ const initialTablePiecePositions: ITableState = {
   e1: createSquare({ piece: "kingWhite", type: Piece.king, color: Color.white }),
   e2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
   e7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
-  // e7: createSquare({ piece: "bishopBlack", type: Piece.bishop, color: Color.black }),
-
   e8: createSquare({ piece: "kingBlack", type: Piece.king, color: Color.black }),
   f1: createSquare({ piece: "bishopWhite", type: Piece.bishop, color: Color.white }),
   f2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
@@ -80,8 +74,6 @@ const initialTablePiecePositions: ITableState = {
   g1: createSquare({ piece: "knightWhite", type: Piece.knight, color: Color.white }),
   g2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
   g7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
-  // g7: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
-
   g8: createSquare({ piece: "knightBlack", type: Piece.knight, color: Color.black }),
   h1: createSquare({ piece: "rookWhite", type: Piece.rook, color: Color.white }),
   h2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),

@@ -1,7 +1,6 @@
 import { IOnClickSquare } from "../utils/interfaces";
 import onClickSquare from "../utils/onClickSquare";
 interface ISquareComponent {
-  file: string;
   YCoordonate: number;
   XCoordonate: number;
   children?: React.ReactNode;
@@ -10,7 +9,6 @@ interface ISquareComponent {
   isAttacked: boolean;
 }
 const Square = ({
-  file,
   YCoordonate,
   XCoordonate,
   children,

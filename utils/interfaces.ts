@@ -44,10 +44,8 @@ export interface IOnClickSquare {
   highlightSquares: (squares: string[] | null) => void;
   unHilightAllSquares: () => void;
   setSelectedPiece: (square: ITableState) => void;
-  selectedPiece: ITableState;
   movePieceToSquare: (square: string) => void;
   turn: Color;
   changeTurn: () => void;
   highlightAttackingSquares: (squares: string[] | null) => void;
-  isCheck: boolean;
 }

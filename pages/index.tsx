@@ -4,18 +4,19 @@ import { useEffect, useState } from "react";
 import Square from "../components/Square";
 import "../styles/home.module.css";
 import { FILE_LETTER, InitialTableState } from "../utils/constants";
-import { Color, ITableState, Piece } from "../utils/interfaces";
+import { Color, ITableState } from "../utils/interfaces";
 import File from "../components/File";
-import { checkIfCheck, getAllAttackingMoves } from "../utils/generalFunctions";
+import { checkIfCheck } from "../utils/generalFunctions";
 const Home: NextPage = () => {
   const [tableState, setTableState] = useState<ITableState>(InitialTableState);
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCheck, setIsCheck] = useState(false);
   const highlightSquares = (squares: string[] | null) => {
     if (squares === null) return;
     const highlitedSquares: ITableState = {};
-    for (let i of squares) {
+    for (const i of squares) {
       highlitedSquares[i] = { ...tableState[i], isHighlighted: true };
     }
     setTableState((oldTable) => {
@@ -24,17 +25,17 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
+    const setCheck = () => {
+      if (checkIfCheck({ table: tableState, color: turn })) setIsCheck(true);
+      else setIsCheck(false);
+    };
     setCheck();
-  }, [turn]);
+  }, [tableState, turn]);
 
-  const setCheck = () => {
-    if (checkIfCheck({ table: tableState, color: turn })) setIsCheck(true);
-    else setIsCheck(false);
-  };
   const highlightAttackingSquares = (squares: string[] | null) => {
     if (squares === null) return;
     const attackHighlitedSquares: ITableState = {};
-    for (let i of squares) {
+    for (const i of squares) {
       attackHighlitedSquares[i] = { ...tableState[i], isAttacked: true };
     }
     setTableState((oldTable) => {
@@ -48,7 +49,7 @@ const Home: NextPage = () => {
 
   const unHilightAllSquares = () => {
     const newState: ITableState = {};
-    for (let i in tableState) {
+    for (const i in tableState) {
       newState[i] = { ...tableState[i], isHighlighted: false, isAttacked: false };
     }
     setTableState(newState);
@@ -89,7 +90,6 @@ const Home: NextPage = () => {
                   return (
                     <Square
                       key={(fileIndex + 1) * (squareIndex + 1)}
-                      file={letter}
                       YCoordonate={fileIndex + 1}
                       XCoordonate={squareIndex + 1}
                       isHighlited={tableState[letter + (8 - squareIndex)].isHighlighted}
@@ -99,13 +99,11 @@ const Home: NextPage = () => {
                         square: { [letter + (8 - squareIndex)]: tableState[letter + (8 - squareIndex)] },
                         table: tableState,
                         setSelectedPiece: functionSetSelectedPiece,
-                        selectedPiece: selectedPiece,
                         highlightSquares: highlightSquares,
                         unHilightAllSquares: unHilightAllSquares,
                         turn: turn,
                         changeTurn: changeTurn,
                         highlightAttackingSquares: highlightAttackingSquares,
-                        isCheck: isCheck,
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (

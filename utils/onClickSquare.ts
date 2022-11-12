@@ -12,11 +12,9 @@ const onClickSquare = ({
   unHilightAllSquares,
   highlightSquares,
   setSelectedPiece,
-  selectedPiece,
   movePieceToSquare,
   turn,
   changeTurn,
-  isCheck,
 }: IOnClickSquare) => {
   unHilightAllSquares();
 

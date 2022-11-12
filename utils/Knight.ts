@@ -1,6 +1,6 @@
-import { createSquare, FILE_LETTER } from "./constants";
+import { FILE_LETTER } from "./constants";
 import { wouldItStillBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState, Piece } from "./interfaces";
+import { Color, FileNumber, ITableState } from "./interfaces";
 interface IGetKnightMoves {
   table: ITableState;
   file: string;
