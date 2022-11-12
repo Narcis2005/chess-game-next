@@ -1,6 +1,7 @@
 import { getBishopAttackingMovesWithoutCheckingForCheck } from "./Bishop";
 import { createSquare } from "./constants";
 import { Color, ITableState, Piece } from "./interfaces";
+import { getKingAttackingMovesWithoutCheckingForCheck } from "./KIng";
 import { getKnightAttackingMovesWithoutCheckingForCheck } from "./Knight";
 import { getPawnAttackingMovesWithoutCheckingForCheck } from "./Pawn";
 import { getQueenAttackingMovesWithoutCheckingForCheck } from "./Queen";
@@ -45,6 +46,10 @@ export const getAllAttackingMoves = ({ color, table }: IGetAllAttackingMoves): s
         case Piece.queen:
           const queenAttackingMoves = getQueenAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
           if (queenAttackingMoves) allAttackingMoves.push(...queenAttackingMoves);
+          break;
+        case Piece.king:
+          const kingAttackingMoves = getKingAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
+          if (kingAttackingMoves) allAttackingMoves.push(...kingAttackingMoves);
           break;
       }
     }
