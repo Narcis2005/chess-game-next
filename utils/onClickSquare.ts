@@ -1,5 +1,4 @@
 import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
-import { getAllAttackingMoves } from "./generalFunctions";
 import { Color, IOnClickSquare, Piece } from "./interfaces";
 import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
 import { getPawnAttackingMoves, getPawnMoves } from "./Pawn";
@@ -64,12 +63,12 @@ const onClickSquare = ({
     highlightAttackingSquares(attackingSquares);
     highlightSquares(squares);
   } else if (square[squareName].type === Piece.rook && square[squareName].color === turn) {
-    const squares = getRookMoves({ table, file, row });
+    const squares = getRookMoves({ table, file, row, color: square[squareName].color });
     const attackingSquares = getRookAttackingMoves({ table, file, row, color: square[squareName].color });
     highlightAttackingSquares(attackingSquares);
     highlightSquares(squares);
   } else if (square[squareName].type === Piece.queen && square[squareName].color === turn) {
-    const squares = getQueenMoves({ table, file, row });
+    const squares = getQueenMoves({ table, file, row, color: square[squareName].color });
     const attackingSquares = getQueenAttackingMoves({ table, file, row, color: square[squareName].color });
     highlightAttackingSquares(attackingSquares);
     highlightSquares(squares);

@@ -10,11 +10,39 @@ interface IGetPawnMoves {
   squareName: string;
   color: Color | null;
 }
+export const getPawnAttackingMovesWithoutCheckingForCheck = ({
+  table,
+  file,
+  row,
+  turnCoeficient,
+  color,
+}: IGetPawnMoves): string[] | null => {
+  const attackingPossibleMoves: string[] | null = [];
+  if (color === undefined || color === null) return attackingPossibleMoves;
 
+  const initialX = FileNumber[file as keyof typeof FileNumber];
+  const initialY = row;
+  if (
+    table[FILE_LETTER[initialX] + (initialY + -1 * turnCoeficient)] &&
+    table[FILE_LETTER[initialX] + (initialY + -1 * turnCoeficient)]?.type !== null &&
+    table[FILE_LETTER[initialX] + (initialY + -1 * turnCoeficient)]?.color !== color
+  ) {
+    attackingPossibleMoves.push(FILE_LETTER[initialX] + (initialY + -1 * turnCoeficient));
+  }
+  if (
+    table[FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient)] &&
+    table[FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient)]?.type !== null &&
+    table[FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient)]?.color !== color
+  ) {
+    attackingPossibleMoves.push(FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient));
+  }
+
+  return attackingPossibleMoves;
+};
 export const getPawnAttackingMoves = ({ table, file, row, turnCoeficient, color }: IGetPawnMoves): string[] | null => {
   const attackingPossibleMoves: string[] | null = [];
-
   if (color === undefined || color === null) return attackingPossibleMoves;
+
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
   if (

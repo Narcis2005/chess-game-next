@@ -1,10 +1,10 @@
-import { getBishopAttackingMoves } from "./Bishop";
+import { getBishopAttackingMoves, getBishopAttackingMovesWithoutCheckingForCheck } from "./Bishop";
 import { createSquare, FILE_LETTER } from "./constants";
 import { Color, ITableState, Piece } from "./interfaces";
-import { getKnightAttackingMoves } from "./Knight";
-import { getPawnAttackingMoves } from "./Pawn";
-import { getQueenAttackingMoves } from "./Queen";
-import { getRookAttackingMoves } from "./rook";
+import { getKnightAttackingMoves, getKnightAttackingMovesWithoutCheckingForCheck } from "./Knight";
+import { getPawnAttackingMoves, getPawnAttackingMovesWithoutCheckingForCheck } from "./Pawn";
+import { getQueenAttackingMoves, getQueenAttackingMovesWithoutCheckingForCheck } from "./Queen";
+import { getRookAttackingMoves, getRookAttackingMovesWithoutCheckingForCheck } from "./rook";
 
 interface IGetAllAttackingMoves {
   color: Color;
@@ -21,7 +21,7 @@ export const getAllAttackingMoves = ({ color, table, isCheck }: IGetAllAttacking
       const row = +square.split("")[1];
       switch (table[square].type) {
         case Piece.pawn:
-          const pawnAttackingMoves = getPawnAttackingMoves({
+          const pawnAttackingMoves = getPawnAttackingMovesWithoutCheckingForCheck({
             file,
             row,
             table,
@@ -29,54 +29,23 @@ export const getAllAttackingMoves = ({ color, table, isCheck }: IGetAllAttacking
             turnCoeficient,
             squareName: square,
           });
-          //   if (pawnAttackingMoves && pawnAttackingMoves?.length > 0) {
-          //     console.log("pioni");
-          //     console.log(pawnAttackingMoves);
-          //     console.log(square);
-          //   }
-
           if (pawnAttackingMoves) allAttackingMoves.push(...pawnAttackingMoves);
           break;
         case Piece.bishop:
-          const bishopAttackingMoves = getBishopAttackingMoves({ file, row, table, color });
+          const bishopAttackingMoves = getBishopAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
           if (bishopAttackingMoves) allAttackingMoves.push(...bishopAttackingMoves);
-          //   if (bishopAttackingMoves && bishopAttackingMoves.length > 0) {
-          //     console.log("nebuni");
-          //     console.log(bishopAttackingMoves);
-          //     console.log(square);
-          //   }
-
           break;
         case Piece.knight:
-          const knightAttackingMoves = getKnightAttackingMoves({ file, row, table, color });
+          const knightAttackingMoves = getKnightAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
           if (knightAttackingMoves) allAttackingMoves.push(...knightAttackingMoves);
-          //   if (knightAttackingMoves && knightAttackingMoves.length > 0) {
-          //     console.log("cai");
-          //     console.log(knightAttackingMoves);
-          //     console.log(square);
-          //   }
-
           break;
         case Piece.rook:
-          const rookAttackingMoves = getRookAttackingMoves({ file, row, table, color });
+          const rookAttackingMoves = getRookAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
           if (rookAttackingMoves) allAttackingMoves.push(...rookAttackingMoves);
-          //   if (rookAttackingMoves && rookAttackingMoves.length > 0) {
-          //     console.log("ture");
-          //     console.log(rookAttackingMoves);
-          //     console.log(square);
-          //   }
-
           break;
         case Piece.queen:
-          //   console.log(file, row);
-          const queenAttackingMoves = getQueenAttackingMoves({ file, row, table, color });
+          const queenAttackingMoves = getQueenAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
           if (queenAttackingMoves) allAttackingMoves.push(...queenAttackingMoves);
-          //   if (queenAttackingMoves && queenAttackingMoves.length > 0) {
-          //     console.log("regina");
-          //     console.log(queenAttackingMoves);
-          //     console.log(square);
-          //   }
-
           break;
       }
     }
@@ -126,5 +95,7 @@ export const wouldItStillBeCheck = ({
   };
   const newSquare = { [square]: { ...table[file + row] } };
   const newTable = { ...table, ...newSquare, ...oldSquare };
-  return checkIfCheck({ table: newTable, color });
+  const response = checkIfCheck({ table: newTable, color });
+
+  return response;
 };
