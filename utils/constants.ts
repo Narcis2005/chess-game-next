@@ -83,6 +83,10 @@ const initialTablePiecePositions: ITableState = {
   h2: createSquare({ piece: "pawnWhite", type: Piece.pawn, color: Color.white }),
   h7: createSquare({ piece: "pawnBlack", type: Piece.pawn, color: Color.black }),
   h8: createSquare({ piece: "rookBlack", type: Piece.rook, color: Color.black }),
+  // a8: createSquare({ piece: "kingBlack", type: Piece.king, color: Color.black }),
+
+  // b5: createSquare({ piece: "queenWhite", type: Piece.queen, color: Color.white }),
+  // c6: createSquare({ piece: "kingWhite", type: Piece.king, color: Color.white }),
 };
 export const InitialTableState: ITableState = {
   ...CreateInitialState(),

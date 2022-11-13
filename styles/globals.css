@@ -20,6 +20,9 @@ a {
   width: 5rem;
   position: relative;
 }
+.square.rotated {
+  transform: rotate(180deg);
+}
 .file {
   display: flex;
   flex-direction: column;
@@ -27,6 +30,9 @@ a {
 .table {
   display: flex;
   border: solid 2px black;
+}
+.table.rotated {
+  transform: rotate(180deg);
 }
 .container {
   display: flex;
@@ -66,4 +72,18 @@ a {
 img {
   position: relative;
   z-index: 100;
+}
+@media (max-width: 960px) {
+  .square {
+    width: 3rem;
+    height: 3rem;
+  }
+  .square img {
+    width: 100%;
+    height: 100%;
+  }
+  .highlight::after {
+    width: 10px;
+    height: 10px;
+  }
 }

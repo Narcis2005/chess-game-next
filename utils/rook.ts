@@ -149,7 +149,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
       }
       break;
-    } else if (table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color !== color) break;
+    } else if (table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color === color) break;
   }
   return possibleMoves;
 };

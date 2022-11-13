@@ -6,13 +6,15 @@ import "../styles/home.module.css";
 import { FILE_LETTER, InitialTableState } from "../utils/constants";
 import { Color, ITableState } from "../utils/interfaces";
 import File from "../components/File";
-import { checkIfCheck } from "../utils/generalFunctions";
+import { checkIfCheck, getAllLegalMoves } from "../utils/generalFunctions";
+type TGameState = "playing" | "checkmate" | "draw";
 const Home: NextPage = () => {
   const [tableState, setTableState] = useState<ITableState>(InitialTableState);
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCheck, setIsCheck] = useState(false);
+  const [gameState, setGameState] = useState<TGameState>("playing");
   const highlightSquares = (squares: string[] | null) => {
     if (squares === null) return;
     const highlitedSquares: ITableState = {};
@@ -23,11 +25,28 @@ const Home: NextPage = () => {
       return { ...oldTable, ...highlitedSquares };
     });
   };
+  useEffect(() => {
+    if (gameState === "checkmate" && turn === Color.white) {
+      alert("black won!");
+    } else if (gameState === "checkmate" && turn === Color.black) {
+      alert("white won");
+    } else if (gameState === "draw") {
+      alert("draw");
+    }
+  }, [gameState, turn]);
 
   useEffect(() => {
     const setCheck = () => {
-      if (checkIfCheck({ table: tableState, color: turn })) setIsCheck(true);
-      else setIsCheck(false);
+      let check = false;
+      if (checkIfCheck({ table: tableState, color: turn })) check = true;
+      setIsCheck(check);
+      const checkGameState = (check: boolean) => {
+        const allLegalMoves = getAllLegalMoves({ table: tableState, color: turn });
+        if (allLegalMoves && allLegalMoves?.length > 0) return;
+        if (check) setGameState("checkmate");
+        else setGameState("draw");
+      };
+      checkGameState(check);
     };
     setCheck();
   }, [tableState, turn]);
