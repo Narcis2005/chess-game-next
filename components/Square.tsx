@@ -7,6 +7,7 @@ interface ISquareComponent {
   isHighlited: boolean;
   onClickSquareProps: IOnClickSquare;
   isAttacked: boolean;
+  isCastlingSquare: boolean;
 }
 const Square = ({
   YCoordonate,
@@ -15,13 +16,14 @@ const Square = ({
   onClickSquareProps,
   isHighlited,
   isAttacked,
+  isCastlingSquare,
 }: ISquareComponent) => {
   return (
     <>
       <div
         className={`square ${(YCoordonate + XCoordonate) % 2 === 0 ? "white" : "black"} ${
           isHighlited ? "highlight" : ""
-        } ${isAttacked ? "attacked" : ""}`}
+        } ${isAttacked ? "attacked" : ""} ${isCastlingSquare ? "highlight" : ""}`}
         onClick={() =>
           onClickSquare({
             ...onClickSquareProps,

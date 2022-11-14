@@ -27,6 +27,7 @@ export interface ICreateSquare {
   isHighlighted?: boolean;
   isAttacked?: boolean;
   color: Color | null;
+  hasMoved?: boolean;
 }
 export interface ISquare {
   piece: string | null;
@@ -34,6 +35,9 @@ export interface ISquare {
   isHighlighted: boolean;
   isAttacked: boolean;
   color: Color | null;
+  hasMoved: boolean;
+  isKingCastlingSquare: boolean;
+  isQueenCastlingSquare: boolean;
 }
 export interface ITableState {
   [key: string]: ISquare;
@@ -44,8 +48,10 @@ export interface IOnClickSquare {
   highlightSquares: (squares: string[] | null) => void;
   unHilightAllSquares: () => void;
   setSelectedPiece: (square: ITableState) => void;
-  movePieceToSquare: (square: string) => void;
+  movePieceToSquare: (square: string, piece?: ITableState) => void;
   turn: Color;
+  selectedPiece: ITableState;
   changeTurn: () => void;
   highlightAttackingSquares: (squares: string[] | null) => void;
+  highlightCastlingSquare: (square: string, king: boolean) => void;
 }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Square from "../components/Square";
 import "../styles/home.module.css";
-import { FILE_LETTER, InitialTableState } from "../utils/constants";
+import { createSquare, FILE_LETTER, InitialTableState } from "../utils/constants";
 import { Color, ITableState } from "../utils/interfaces";
 import File from "../components/File";
 import { checkIfCheck, getAllLegalMoves } from "../utils/generalFunctions";
@@ -69,24 +69,26 @@ const Home: NextPage = () => {
   const unHilightAllSquares = () => {
     const newState: ITableState = {};
     for (const i in tableState) {
-      newState[i] = { ...tableState[i], isHighlighted: false, isAttacked: false };
+      newState[i] = {
+        ...tableState[i],
+        isHighlighted: false,
+        isAttacked: false,
+        isKingCastlingSquare: false,
+        isQueenCastlingSquare: false,
+      };
     }
     setTableState(newState);
   };
 
-  const movePieceToSquare = (square: string) => {
+  const movePieceToSquare = (square: string, pieceToMove?: ITableState) => {
+    const piece = pieceToMove ? pieceToMove : selectedPiece;
     const emptySquare = {
-      [Object.keys(selectedPiece)[0]]: {
-        piece: null,
-        type: null,
-        isHighlighted: false,
-        isAttacked: false,
-        color: null,
-      },
+      [Object.keys(piece)[0]]: createSquare({ piece: null, color: null, type: null }),
     };
     const newSquare = {
       [square]: {
-        ...selectedPiece[Object.keys(selectedPiece)[0]],
+        ...piece[Object.keys(piece)[0]],
+        hasMoved: true,
       },
     };
     setTableState((oldState) => {
@@ -96,6 +98,15 @@ const Home: NextPage = () => {
   const changeTurn = () => {
     setTurn((oldTurn) => {
       return oldTurn === Color.black ? Color.white : Color.black;
+    });
+  };
+  const highlightCastlingSquare = (square: string, king: boolean) => {
+    const castlingSquares: ITableState = {};
+    if (king) castlingSquares[square] = { ...tableState[square], isKingCastlingSquare: true };
+    else castlingSquares[square] = { ...tableState[square], isQueenCastlingSquare: true };
+
+    setTableState((oldTable) => {
+      return { ...oldTable, ...castlingSquares };
     });
   };
   return (
@@ -113,6 +124,10 @@ const Home: NextPage = () => {
                       XCoordonate={squareIndex + 1}
                       isHighlited={tableState[letter + (8 - squareIndex)].isHighlighted}
                       isAttacked={tableState[letter + (8 - squareIndex)].isAttacked}
+                      isCastlingSquare={
+                        tableState[letter + (8 - squareIndex)].isKingCastlingSquare ||
+                        tableState[letter + (8 - squareIndex)].isQueenCastlingSquare
+                      }
                       onClickSquareProps={{
                         movePieceToSquare: movePieceToSquare,
                         square: { [letter + (8 - squareIndex)]: tableState[letter + (8 - squareIndex)] },
@@ -123,6 +138,8 @@ const Home: NextPage = () => {
                         turn: turn,
                         changeTurn: changeTurn,
                         highlightAttackingSquares: highlightAttackingSquares,
+                        selectedPiece,
+                        highlightCastlingSquare,
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (

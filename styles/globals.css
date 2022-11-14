@@ -87,3 +87,9 @@ img {
     height: 10px;
   }
 }
+@media (max-width: 768px) {
+  .square {
+    width: 2rem;
+    height: 2rem;
+  }
+}

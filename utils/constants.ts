@@ -37,13 +37,23 @@ const CreateInitialState = (): ITableState => {
   return initialState;
 };
 
-export const createSquare = ({ piece, type, isHighlighted, isAttacked, color }: ICreateSquare): ISquare => {
+export const createSquare = ({
+  piece,
+  type,
+  isHighlighted,
+  isAttacked,
+  color,
+  hasMoved = false,
+}: ICreateSquare): ISquare => {
   return {
     piece: piece,
     type: type,
     color: color,
     isHighlighted: isHighlighted === true ? true : false, //because it can be null
     isAttacked: isAttacked === true ? true : false, //because it can be null
+    hasMoved: hasMoved,
+    isKingCastlingSquare: false,
+    isQueenCastlingSquare: false,
   };
 };
 const initialTablePiecePositions: ITableState = {

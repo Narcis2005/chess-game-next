@@ -1,5 +1,8 @@
 import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
-import { Color, IOnClickSquare, Piece } from "./interfaces";
+import { FILE_LETTER } from "./constants";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { createFENFromTable } from "./generalFunctions";
+import { Color, FileNumber, IOnClickSquare, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
 import { getPawnAttackingMoves, getPawnMoves } from "./Pawn";
@@ -15,11 +18,17 @@ const onClickSquare = ({
   setSelectedPiece,
   movePieceToSquare,
   turn,
+  highlightCastlingSquare,
+  // selectedPiece,
   changeTurn,
 }: IOnClickSquare) => {
   unHilightAllSquares();
 
   const squareName = Object.keys(square)[0];
+  const file = squareName.split("")[0];
+  const row = +squareName.split("")[1];
+  const initialX = FileNumber[file as keyof typeof FileNumber];
+  const initialY = row;
   if (
     (square[squareName].isHighlighted && square[squareName].piece === null) || //if piece can go to square (because is highlighted)
     (square[squareName].isAttacked && square[squareName].piece !== null && square[squareName].color !== turn) //if piece can capture piece
@@ -28,10 +37,27 @@ const onClickSquare = ({
     changeTurn();
     return;
   }
+  if (square[squareName].isKingCastlingSquare) {
+    movePieceToSquare(squareName); // move the king to the castling square
+    movePieceToSquare(FILE_LETTER[initialX - 2] + initialY, {
+      [FILE_LETTER[initialX] + initialY]: table[FILE_LETTER[initialX] + initialY], // move the rook to the left of the king
+    });
+    changeTurn();
+    return;
+  }
+  if (square[squareName].isQueenCastlingSquare) {
+    movePieceToSquare(squareName); // move the king to the castling square
+    movePieceToSquare(FILE_LETTER[initialX] + initialY, {
+      [FILE_LETTER[initialX - 3] + initialY]: table[FILE_LETTER[initialX - 3] + initialY], // move the rook to the left of the king
+    });
+    changeTurn();
+    return;
+  }
+  console.log(createFENFromTable(table, turn));
+
   setSelectedPiece(square);
   const turnCoeficient = turn === Color.black ? 1 : -1;
-  const file = squareName.split("")[0];
-  const row = +squareName.split("")[1];
+
   if (square[squareName].type === Piece.pawn && square[squareName].color === turn) {
     const squares = getPawnMoves({
       table,
@@ -72,9 +98,14 @@ const onClickSquare = ({
     highlightAttackingSquares(attackingSquares);
     highlightSquares(squares);
   } else if (square[squareName].type === Piece.king && square[squareName].color === turn) {
-    const squares = getKingMoves({ table, file, row, color: square[squareName].color });
+    const kingMovesInfo = getKingMoves({ table, file, row, color: square[squareName].color });
     const attackingSquares = getKingAttackingMoves({ table, file, row, color: square[squareName].color });
-    highlightSquares(squares);
+    if (kingMovesInfo && kingMovesInfo.moves) highlightSquares(kingMovesInfo.moves);
+    if (kingMovesInfo && kingMovesInfo.kingSideCastling)
+      highlightCastlingSquare(FILE_LETTER[initialX + 1] + initialY, true);
+    if (kingMovesInfo && kingMovesInfo.queenSideCastling)
+      highlightCastlingSquare(FILE_LETTER[initialX - 3] + initialY, false);
+
     highlightAttackingSquares(attackingSquares);
   }
 };

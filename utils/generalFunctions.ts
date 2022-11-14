@@ -1,5 +1,5 @@
 import { getBishopAttackingMoves, getBishopAttackingMovesWithoutCheckingForCheck, getBishopMoves } from "./Bishop";
-import { createSquare } from "./constants";
+import { createSquare, FILE_LETTER } from "./constants";
 import { Color, ITableState, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingAttackingMovesWithoutCheckingForCheck, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightAttackingMovesWithoutCheckingForCheck, getKnightMoves } from "./Knight";
@@ -157,11 +157,127 @@ export const getAllLegalMoves = ({ color, table }: IGetAllAttackingMoves): strin
         case Piece.king:
           const kingLegalMoves = getKingMoves({ file, row, table, color });
           const kingLegalAttackingMoves = getKingAttackingMoves({ file, row, table, color });
-          if (kingLegalMoves) allLegalMoves.push(...kingLegalMoves);
+          if (kingLegalMoves) allLegalMoves.push(...kingLegalMoves.moves);
           if (kingLegalAttackingMoves) allLegalMoves.push(...kingLegalAttackingMoves);
           break;
       }
     }
   }
   return allLegalMoves;
+};
+export const createFENFromTable = (table: ITableState, turn: Color) => {
+  let FEN = "";
+  for (let i = 8; i >= 1; i--) {
+    let emptySquares = 0;
+    let hasAnythingBeenAdded = false;
+    for (let j = 0; j < 8; j++) {
+      if (table[FILE_LETTER[j] + i]?.type === Piece.pawn) {
+        hasAnythingBeenAdded = true;
+        if (emptySquares > 0) {
+          FEN += emptySquares;
+          emptySquares = 0;
+        }
+        if (table[FILE_LETTER[j] + i]?.color === Color.black) {
+          FEN += "p";
+        } else FEN += "P";
+      } else if (table[FILE_LETTER[j] + i]?.type === Piece.knight) {
+        hasAnythingBeenAdded = true;
+        if (emptySquares > 0) {
+          FEN += emptySquares;
+          emptySquares = 0;
+        }
+        if (table[FILE_LETTER[j] + i]?.color === Color.black) {
+          FEN += "n";
+        } else FEN += "N";
+      } else if (table[FILE_LETTER[j] + i]?.type === Piece.bishop) {
+        hasAnythingBeenAdded = true;
+        if (emptySquares > 0) {
+          FEN += emptySquares;
+          emptySquares = 0;
+        }
+        if (table[FILE_LETTER[j] + i]?.color === Color.black) {
+          FEN += "b";
+        } else FEN += "B";
+      } else if (table[FILE_LETTER[j] + i]?.type === Piece.rook) {
+        hasAnythingBeenAdded = true;
+        if (emptySquares > 0) {
+          FEN += emptySquares;
+          emptySquares = 0;
+        }
+        if (table[FILE_LETTER[j] + i]?.color === Color.black) {
+          FEN += "r";
+        } else FEN += "R";
+      } else if (table[FILE_LETTER[j] + i]?.type === Piece.queen) {
+        hasAnythingBeenAdded = true;
+        if (emptySquares > 0) {
+          FEN += emptySquares;
+          emptySquares = 0;
+        }
+        if (table[FILE_LETTER[j] + i]?.color === Color.black) {
+          FEN += "q";
+        } else FEN += "Q";
+      } else if (table[FILE_LETTER[j] + i]?.type === Piece.king) {
+        hasAnythingBeenAdded = true;
+        if (emptySquares > 0) {
+          FEN += emptySquares;
+          emptySquares = 0;
+        }
+        if (table[FILE_LETTER[j] + i]?.color === Color.black) {
+          FEN += "k";
+        } else FEN += "K";
+      }
+
+      if (!hasAnythingBeenAdded) emptySquares++;
+      hasAnythingBeenAdded = false;
+    }
+    if (emptySquares > 0) {
+      FEN += emptySquares;
+      emptySquares = 0;
+    }
+    hasAnythingBeenAdded = false;
+    FEN += "/";
+  }
+  FEN = FEN.slice(0, -1);
+  if (turn === Color.white) {
+    FEN += " w ";
+  } else {
+    FEN += " b ";
+  }
+  const whiteKingSquare = getKingSquare({ table: table, color: Color.white });
+  const blackKingSquare = getKingSquare({ table: table, color: Color.black });
+  let whiteKingFile = "";
+  let whiteKingRow = -1;
+  let blackKingFile = "";
+  let blackKingRow = -1;
+  if (whiteKingSquare) {
+    whiteKingFile = whiteKingSquare.split("")[0];
+    whiteKingRow = +whiteKingSquare.split("")[1];
+  }
+  if (blackKingSquare) {
+    blackKingFile = blackKingSquare.split("")[0];
+    blackKingRow = +blackKingSquare.split("")[1];
+  }
+  const whiteKingInfo = getKingMoves({ table, color: Color.white, file: whiteKingFile, row: whiteKingRow });
+  const blackKingInfo = getKingMoves({ table, color: Color.black, file: blackKingFile, row: blackKingRow });
+  let isAnyCastlingAvalaible = false;
+  if (whiteKingInfo?.queenSideCastling) {
+    FEN += "Q";
+    isAnyCastlingAvalaible = true;
+  }
+  if (whiteKingInfo?.kingSideCastling) {
+    FEN += "K";
+    isAnyCastlingAvalaible = true;
+  }
+  if (blackKingInfo?.queenSideCastling) {
+    FEN += "q";
+    isAnyCastlingAvalaible = true;
+  }
+  if (blackKingInfo?.kingSideCastling) {
+    FEN += "k";
+    isAnyCastlingAvalaible = true;
+  }
+  if (isAnyCastlingAvalaible === false) {
+    FEN += "-";
+  }
+  return FEN;
 };
