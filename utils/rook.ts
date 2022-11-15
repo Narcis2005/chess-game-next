@@ -7,6 +7,7 @@ interface IGetRookMoves {
   file: string;
   row: number;
   color: Color | null;
+  enPassantSquare: string | null;
 }
 export const getRookAttackingMovesWithoutCheckingForCheck = ({
   table,
@@ -65,7 +66,7 @@ export const getRookAttackingMovesWithoutCheckingForCheck = ({
   }
   return possibleMoves;
 };
-export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves): string[] | null => {
+export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetRookMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -84,6 +85,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves
           square: FILE_LETTER[initialX - i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
@@ -104,6 +106,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves
           square: FILE_LETTER[initialX + i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
@@ -124,6 +127,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves
           square: FILE_LETTER[initialX - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
@@ -144,6 +148,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves
           square: FILE_LETTER[initialX - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
@@ -154,7 +159,7 @@ export const getRookAttackingMoves = ({ table, file, row, color }: IGetRookMoves
   return possibleMoves;
 };
 
-export const getRookMoves = ({ table, file, row, color }: IGetRookMoves): string[] | null => {
+export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetRookMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -169,6 +174,7 @@ export const getRookMoves = ({ table, file, row, color }: IGetRookMoves): string
           square: FILE_LETTER[initialX - i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
@@ -184,6 +190,7 @@ export const getRookMoves = ({ table, file, row, color }: IGetRookMoves): string
           square: FILE_LETTER[initialX + i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
@@ -199,6 +206,7 @@ export const getRookMoves = ({ table, file, row, color }: IGetRookMoves): string
           square: FILE_LETTER[initialX - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
@@ -214,6 +222,7 @@ export const getRookMoves = ({ table, file, row, color }: IGetRookMoves): string
           square: FILE_LETTER[initialX - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));

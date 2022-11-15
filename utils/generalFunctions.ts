@@ -10,9 +10,10 @@ import { getRookAttackingMoves, getRookAttackingMovesWithoutCheckingForCheck, ge
 interface IGetAllAttackingMoves {
   color: Color;
   table: ITableState;
+  enPassantSquare: string | null;
 }
 
-export const getAllAttackingMoves = ({ color, table }: IGetAllAttackingMoves): string[] | null => {
+export const getAllAttackingMoves = ({ color, table, enPassantSquare }: IGetAllAttackingMoves): string[] | null => {
   const allAttackingMoves = [];
   const turnCoeficient = color === Color.black ? 1 : -1;
   for (const square in table) {
@@ -28,27 +29,58 @@ export const getAllAttackingMoves = ({ color, table }: IGetAllAttackingMoves): s
             color: color,
             turnCoeficient,
             squareName: square,
+            enPassantSquare,
           });
           if (pawnAttackingMoves) allAttackingMoves.push(...pawnAttackingMoves);
           break;
         case Piece.bishop:
-          const bishopAttackingMoves = getBishopAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
+          const bishopAttackingMoves = getBishopAttackingMovesWithoutCheckingForCheck({
+            file,
+            row,
+            table,
+            color,
+            enPassantSquare,
+          });
           if (bishopAttackingMoves) allAttackingMoves.push(...bishopAttackingMoves);
           break;
         case Piece.knight:
-          const knightAttackingMoves = getKnightAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
+          const knightAttackingMoves = getKnightAttackingMovesWithoutCheckingForCheck({
+            file,
+            row,
+            table,
+            color,
+            enPassantSquare,
+          });
           if (knightAttackingMoves) allAttackingMoves.push(...knightAttackingMoves);
           break;
         case Piece.rook:
-          const rookAttackingMoves = getRookAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
+          const rookAttackingMoves = getRookAttackingMovesWithoutCheckingForCheck({
+            file,
+            row,
+            table,
+            color,
+            enPassantSquare,
+          });
           if (rookAttackingMoves) allAttackingMoves.push(...rookAttackingMoves);
           break;
         case Piece.queen:
-          const queenAttackingMoves = getQueenAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
+          const queenAttackingMoves = getQueenAttackingMovesWithoutCheckingForCheck({
+            file,
+            row,
+            table,
+            color,
+            enPassantSquare,
+          });
           if (queenAttackingMoves) allAttackingMoves.push(...queenAttackingMoves);
           break;
         case Piece.king:
-          const kingAttackingMoves = getKingAttackingMovesWithoutCheckingForCheck({ file, row, table, color });
+          const kingAttackingMoves = getKingAttackingMovesWithoutCheckingForCheck({
+            file,
+            row,
+            table,
+            color,
+            enPassantSquare,
+          });
           if (kingAttackingMoves) allAttackingMoves.push(...kingAttackingMoves);
           break;
       }
@@ -61,10 +93,19 @@ const getKingSquare = ({ table, color }: { table: ITableState; color: Color }) =
     if (table[square].type === Piece.king && table[square].color === color) return square;
   }
 };
-export const checkIfCheck = ({ table, color }: { table: ITableState; color: Color }) => {
+export const checkIfCheck = ({
+  table,
+  color,
+  enPassantSquare,
+}: {
+  table: ITableState;
+  color: Color;
+  enPassantSquare: string | null;
+}) => {
   const allAttackingMoves = getAllAttackingMoves({
     table: table,
     color: color == Color.white ? Color.black : Color.white,
+    enPassantSquare,
   });
   const kingSquare = getKingSquare({ table: table, color: color });
 
@@ -80,11 +121,13 @@ export const wouldItStillBeCheck = ({
   square,
   file,
   row,
+  enPassantSquare,
 }: {
   table: ITableState;
   color: Color;
   square: string;
   file: string;
+  enPassantSquare: string | null;
   row: number;
 }) => {
   const oldSquare = {
@@ -98,11 +141,11 @@ export const wouldItStillBeCheck = ({
   };
   const newSquare = { [square]: { ...table[`${file}${row}`] } };
   const newTable = { ...table, ...newSquare, ...oldSquare };
-  const response = checkIfCheck({ table: newTable, color });
+  const response = checkIfCheck({ table: newTable, color, enPassantSquare });
 
   return response;
 };
-export const getAllLegalMoves = ({ color, table }: IGetAllAttackingMoves): string[] | null => {
+export const getAllLegalMoves = ({ color, table, enPassantSquare }: IGetAllAttackingMoves): string[] | null => {
   const allLegalMoves = [];
   const turnCoeficient = color === Color.black ? 1 : -1;
   for (const square in table) {
@@ -118,6 +161,7 @@ export const getAllLegalMoves = ({ color, table }: IGetAllAttackingMoves): strin
             color: color,
             turnCoeficient,
             squareName: square,
+            enPassantSquare,
           });
           const pawnLegalAttackingMoves = getPawnAttackingMoves({
             file,
@@ -126,37 +170,39 @@ export const getAllLegalMoves = ({ color, table }: IGetAllAttackingMoves): strin
             color: color,
             turnCoeficient,
             squareName: square,
+            enPassantSquare,
           });
           if (pawnLegalMoves) allLegalMoves.push(...pawnLegalMoves);
-          if (pawnLegalAttackingMoves) allLegalMoves.push(...pawnLegalAttackingMoves);
+          if (pawnLegalAttackingMoves && pawnLegalAttackingMoves.attackingPossibleMoves)
+            allLegalMoves.push(...pawnLegalAttackingMoves.attackingPossibleMoves);
           break;
         case Piece.bishop:
-          const bishopLegalMoves = getBishopMoves({ file, row, table, color });
-          const bishopLegalAttackingMoves = getBishopAttackingMoves({ file, row, table, color });
+          const bishopLegalMoves = getBishopMoves({ file, row, table, color, enPassantSquare });
+          const bishopLegalAttackingMoves = getBishopAttackingMoves({ file, row, table, color, enPassantSquare });
           if (bishopLegalMoves) allLegalMoves.push(...bishopLegalMoves);
           if (bishopLegalAttackingMoves) allLegalMoves.push(...bishopLegalAttackingMoves);
           break;
         case Piece.knight:
-          const knightLegalMoves = getKnightMoves({ file, row, table, color });
-          const knightLegalAttackingMoves = getKnightAttackingMoves({ file, row, table, color });
+          const knightLegalMoves = getKnightMoves({ file, row, table, color, enPassantSquare });
+          const knightLegalAttackingMoves = getKnightAttackingMoves({ file, row, table, color, enPassantSquare });
           if (knightLegalMoves) allLegalMoves.push(...knightLegalMoves);
           if (knightLegalAttackingMoves) allLegalMoves.push(...knightLegalAttackingMoves);
           break;
         case Piece.rook:
-          const rookLegalMoves = getRookMoves({ file, row, table, color });
-          const rookLegalAttackingMoves = getRookAttackingMoves({ file, row, table, color });
+          const rookLegalMoves = getRookMoves({ file, row, table, color, enPassantSquare });
+          const rookLegalAttackingMoves = getRookAttackingMoves({ file, row, table, color, enPassantSquare });
           if (rookLegalMoves) allLegalMoves.push(...rookLegalMoves);
           if (rookLegalAttackingMoves) allLegalMoves.push(...rookLegalAttackingMoves);
           break;
         case Piece.queen:
-          const queenLegalMoves = getQueenMoves({ file, row, table, color });
-          const queenLegalAttackingMoves = getQueenAttackingMoves({ file, row, table, color });
+          const queenLegalMoves = getQueenMoves({ file, row, table, color, enPassantSquare });
+          const queenLegalAttackingMoves = getQueenAttackingMoves({ file, row, table, color, enPassantSquare });
           if (queenLegalMoves) allLegalMoves.push(...queenLegalMoves);
           if (queenLegalAttackingMoves) allLegalMoves.push(...queenLegalAttackingMoves);
           break;
         case Piece.king:
-          const kingLegalMoves = getKingMoves({ file, row, table, color });
-          const kingLegalAttackingMoves = getKingAttackingMoves({ file, row, table, color });
+          const kingLegalMoves = getKingMoves({ file, row, table, color, enPassantSquare });
+          const kingLegalAttackingMoves = getKingAttackingMoves({ file, row, table, color, enPassantSquare });
           if (kingLegalMoves) allLegalMoves.push(...kingLegalMoves.moves);
           if (kingLegalAttackingMoves) allLegalMoves.push(...kingLegalAttackingMoves);
           break;
@@ -165,7 +211,7 @@ export const getAllLegalMoves = ({ color, table }: IGetAllAttackingMoves): strin
   }
   return allLegalMoves;
 };
-export const createFENFromTable = (table: ITableState, turn: Color) => {
+export const createFENFromTable = (table: ITableState, turn: Color, enPassantSquare: string | null) => {
   let FEN = "";
   for (let i = 8; i >= 1; i--) {
     let emptySquares = 0;
@@ -257,8 +303,20 @@ export const createFENFromTable = (table: ITableState, turn: Color) => {
     blackKingFile = blackKingSquare.split("")[0];
     blackKingRow = +blackKingSquare.split("")[1];
   }
-  const whiteKingInfo = getKingMoves({ table, color: Color.white, file: whiteKingFile, row: whiteKingRow });
-  const blackKingInfo = getKingMoves({ table, color: Color.black, file: blackKingFile, row: blackKingRow });
+  const whiteKingInfo = getKingMoves({
+    table,
+    color: Color.white,
+    file: whiteKingFile,
+    row: whiteKingRow,
+    enPassantSquare,
+  });
+  const blackKingInfo = getKingMoves({
+    table,
+    color: Color.black,
+    file: blackKingFile,
+    row: blackKingRow,
+    enPassantSquare,
+  });
   let isAnyCastlingAvalaible = false;
   if (whiteKingInfo?.queenSideCastling) {
     FEN += "Q";
@@ -279,5 +337,8 @@ export const createFENFromTable = (table: ITableState, turn: Color) => {
   if (isAnyCastlingAvalaible === false) {
     FEN += "-";
   }
+  if (enPassantSquare) {
+    FEN += " " + enPassantSquare;
+  } else FEN += " -";
   return FEN;
 };

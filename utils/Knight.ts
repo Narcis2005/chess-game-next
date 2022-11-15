@@ -6,6 +6,7 @@ interface IGetKnightMoves {
   file: string;
   row: number;
   color: Color | null;
+  enPassantSquare: string | null;
 }
 export const getKnightAttackingMovesWithoutCheckingForCheck = ({
   table,
@@ -40,7 +41,13 @@ export const getKnightAttackingMovesWithoutCheckingForCheck = ({
   }
   return possibleMoves;
 };
-export const getKnightAttackingMoves = ({ table, file, row, color }: IGetKnightMoves): string[] | null => {
+export const getKnightAttackingMoves = ({
+  table,
+  file,
+  row,
+  color,
+  enPassantSquare,
+}: IGetKnightMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -61,6 +68,7 @@ export const getKnightAttackingMoves = ({ table, file, row, color }: IGetKnightM
             square: FILE_LETTER[verticalMove.x - 1] + verticalMove.y,
             row,
             file,
+            enPassantSquare,
           })
         ) {
           possibleMoves.push(FILE_LETTER[verticalMove.x - 1] + verticalMove.y);
@@ -79,6 +87,7 @@ export const getKnightAttackingMoves = ({ table, file, row, color }: IGetKnightM
             row,
             file,
             color: color,
+            enPassantSquare,
           })
         ) {
           possibleMoves.push(FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y);
@@ -89,7 +98,7 @@ export const getKnightAttackingMoves = ({ table, file, row, color }: IGetKnightM
   return possibleMoves;
 };
 
-export const getKnightMoves = ({ table, file, row, color }: IGetKnightMoves): string[] | null => {
+export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGetKnightMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
 
   if (color === undefined || color === null) return possibleMoves;
@@ -106,6 +115,7 @@ export const getKnightMoves = ({ table, file, row, color }: IGetKnightMoves): st
             file,
             square: FILE_LETTER[verticalMove.x - 1] + verticalMove.y,
             color: color,
+            enPassantSquare,
           })
         ) {
           possibleMoves.push(FILE_LETTER[verticalMove.x - 1] + verticalMove.y);
@@ -120,6 +130,7 @@ export const getKnightMoves = ({ table, file, row, color }: IGetKnightMoves): st
             file,
             square: FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y,
             color: color,
+            enPassantSquare,
           })
         ) {
           possibleMoves.push(FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y);

@@ -7,6 +7,7 @@ interface IGetBishopMoves {
   file: string;
   row: number;
   color: Color | null;
+  enPassantSquare: string | null;
 }
 export const getBishopAttackingMovesWithoutCheckingForCheck = ({
   table,
@@ -65,7 +66,13 @@ export const getBishopAttackingMovesWithoutCheckingForCheck = ({
   }
   return possibleMoves;
 };
-export const getBishopAttackingMoves = ({ table, file, row, color }: IGetBishopMoves): string[] | null => {
+export const getBishopAttackingMoves = ({
+  table,
+  file,
+  row,
+  color,
+  enPassantSquare,
+}: IGetBishopMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -84,6 +91,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color }: IGetBishopM
           square: FILE_LETTER[initialX + i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
@@ -104,6 +112,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color }: IGetBishopM
           square: FILE_LETTER[initialX + i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
@@ -124,6 +133,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color }: IGetBishopM
           square: FILE_LETTER[initialX - i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
@@ -144,6 +154,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color }: IGetBishopM
           square: FILE_LETTER[initialX - i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));
@@ -153,7 +164,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color }: IGetBishopM
   }
   return possibleMoves;
 };
-export const getBishopMoves = ({ table, file, row, color }: IGetBishopMoves): string[] | null => {
+export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGetBishopMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -168,6 +179,7 @@ export const getBishopMoves = ({ table, file, row, color }: IGetBishopMoves): st
           square: FILE_LETTER[initialX + i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
@@ -183,6 +195,7 @@ export const getBishopMoves = ({ table, file, row, color }: IGetBishopMoves): st
           square: FILE_LETTER[initialX + i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
@@ -198,6 +211,7 @@ export const getBishopMoves = ({ table, file, row, color }: IGetBishopMoves): st
           square: FILE_LETTER[initialX - i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
@@ -213,6 +227,7 @@ export const getBishopMoves = ({ table, file, row, color }: IGetBishopMoves): st
           square: FILE_LETTER[initialX - i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));

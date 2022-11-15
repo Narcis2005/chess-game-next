@@ -38,6 +38,7 @@ export interface ISquare {
   hasMoved: boolean;
   isKingCastlingSquare: boolean;
   isQueenCastlingSquare: boolean;
+  isEnPassantMovingSquare: boolean;
 }
 export interface ITableState {
   [key: string]: ISquare;
@@ -54,4 +55,8 @@ export interface IOnClickSquare {
   changeTurn: () => void;
   highlightAttackingSquares: (squares: string[] | null) => void;
   highlightCastlingSquare: (square: string, king: boolean) => void;
+  enPassantSquare: string | null;
+  setEnPassantSquare: (square: string | null) => void;
+  highlightEnPassantSquare: (square: string[]) => void;
+  removePieceFromSquare: (square: string) => void;
 }

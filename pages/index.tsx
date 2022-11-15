@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Square from "../components/Square";
 import "../styles/home.module.css";
 import { createSquare, FILE_LETTER, InitialTableState } from "../utils/constants";
@@ -8,13 +8,14 @@ import { Color, ITableState } from "../utils/interfaces";
 import File from "../components/File";
 import { checkIfCheck, getAllLegalMoves } from "../utils/generalFunctions";
 type TGameState = "playing" | "checkmate" | "draw";
+type TEnPassant = string | null;
 const Home: NextPage = () => {
   const [tableState, setTableState] = useState<ITableState>(InitialTableState);
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isCheck, setIsCheck] = useState(false);
+  const isCheck = useRef(false);
   const [gameState, setGameState] = useState<TGameState>("playing");
+  const enPassantSquare = useRef<TEnPassant>(null);
   const highlightSquares = (squares: string[] | null) => {
     if (squares === null) return;
     const highlitedSquares: ITableState = {};
@@ -37,16 +38,16 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const setCheck = () => {
-      let check = false;
-      if (checkIfCheck({ table: tableState, color: turn })) check = true;
-      setIsCheck(check);
-      const checkGameState = (check: boolean) => {
-        const allLegalMoves = getAllLegalMoves({ table: tableState, color: turn });
-        if (allLegalMoves && allLegalMoves?.length > 0) return;
-        if (check) setGameState("checkmate");
-        else setGameState("draw");
-      };
-      checkGameState(check);
+      if (checkIfCheck({ table: tableState, color: turn, enPassantSquare: enPassantSquare.current }))
+        isCheck.current = true;
+      const allLegalMoves = getAllLegalMoves({
+        table: tableState,
+        color: turn,
+        enPassantSquare: enPassantSquare.current,
+      });
+      if (allLegalMoves && allLegalMoves?.length > 0) return;
+      if (isCheck.current) setGameState("checkmate");
+      else setGameState("draw");
     };
     setCheck();
   }, [tableState, turn]);
@@ -109,6 +110,26 @@ const Home: NextPage = () => {
       return { ...oldTable, ...castlingSquares };
     });
   };
+  const setEnPassantSquare = (square: string | null) => {
+    enPassantSquare.current = square;
+  };
+  const highlightEnPassantSquare = (squares: string[]) => {
+    const castlingSquares: ITableState = {};
+    for (const i of squares) {
+      castlingSquares[i] = { ...tableState[i], isEnPassantMovingSquare: true };
+    }
+    setTableState((oldTable) => {
+      return { ...oldTable, ...castlingSquares };
+    });
+  };
+  const removePieceFromSquare = (square: string) => {
+    const emptySquare = {
+      [square]: createSquare({ piece: null, color: null, type: null }),
+    };
+    setTableState((oldState) => {
+      return { ...oldState, ...emptySquare };
+    });
+  };
   return (
     <>
       <div className="container">
@@ -124,6 +145,7 @@ const Home: NextPage = () => {
                       XCoordonate={squareIndex + 1}
                       isHighlited={tableState[letter + (8 - squareIndex)].isHighlighted}
                       isAttacked={tableState[letter + (8 - squareIndex)].isAttacked}
+                      isEnPassantSquare={tableState[letter + (8 - squareIndex)].isEnPassantMovingSquare}
                       isCastlingSquare={
                         tableState[letter + (8 - squareIndex)].isKingCastlingSquare ||
                         tableState[letter + (8 - squareIndex)].isQueenCastlingSquare
@@ -140,6 +162,10 @@ const Home: NextPage = () => {
                         highlightAttackingSquares: highlightAttackingSquares,
                         selectedPiece,
                         highlightCastlingSquare,
+                        enPassantSquare: enPassantSquare.current,
+                        setEnPassantSquare,
+                        highlightEnPassantSquare,
+                        removePieceFromSquare,
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (

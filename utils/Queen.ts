@@ -7,6 +7,7 @@ interface IGetQueenMoves {
   file: string;
   row: number;
   color: Color | null;
+  enPassantSquare: string | null;
 }
 
 export const getQueenAttackingMovesWithoutCheckingForCheck = ({
@@ -101,7 +102,13 @@ export const getQueenAttackingMovesWithoutCheckingForCheck = ({
   }
   return possibleMoves;
 };
-export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMoves): string[] | null => {
+export const getQueenAttackingMoves = ({
+  table,
+  file,
+  row,
+  color,
+  enPassantSquare,
+}: IGetQueenMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -121,6 +128,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX - i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
@@ -141,6 +149,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX + i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
@@ -161,6 +170,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
@@ -181,6 +191,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
@@ -201,6 +212,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX + i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
@@ -221,6 +233,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX + i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
@@ -241,6 +254,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX - i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
@@ -261,6 +275,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
           square: FILE_LETTER[initialX - i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));
@@ -270,7 +285,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color }: IGetQueenMov
   }
   return possibleMoves;
 };
-export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): string[] | null => {
+export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGetQueenMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -285,6 +300,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX - i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
@@ -300,6 +316,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX + i - 1] + initialY,
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
@@ -315,6 +332,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
@@ -330,6 +348,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
@@ -345,6 +364,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX + i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
@@ -360,6 +380,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX + i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
@@ -375,6 +396,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX - i - 1] + (initialY - i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
@@ -390,6 +412,7 @@ export const getQueenMoves = ({ table, file, row, color }: IGetQueenMoves): stri
           square: FILE_LETTER[initialX - i - 1] + (initialY + i),
           row,
           file,
+          enPassantSquare,
         })
       ) {
         possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));
