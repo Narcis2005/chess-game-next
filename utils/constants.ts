@@ -54,6 +54,7 @@ export const createSquare = ({
     hasMoved: hasMoved,
     isKingCastlingSquare: false,
     isQueenCastlingSquare: false,
+    isEnPassantMovingSquare: false,
   };
 };
 const initialTablePiecePositions: ITableState = {
