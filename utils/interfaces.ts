@@ -1,14 +1,14 @@
 export enum Piece {
-  pawn,
-  knight,
-  bishop,
-  rook,
-  queen,
-  king,
+  pawn = "pawn",
+  knight = "knight",
+  bishop = "bishop",
+  rook = "rook",
+  queen = "queen",
+  king = "king",
 }
 export enum Color {
-  white,
-  black,
+  white = "White",
+  black = "Black",
 }
 export enum FileNumber {
   a = 1,
@@ -22,12 +22,8 @@ export enum FileNumber {
 }
 
 export interface ICreateSquare {
-  piece: string | null;
   type: Piece | null;
-  isHighlighted?: boolean;
-  isAttacked?: boolean;
   color: Color | null;
-  hasMoved?: boolean;
 }
 export interface ISquare {
   piece: string | null;
@@ -59,4 +55,9 @@ export interface IOnClickSquare {
   setEnPassantSquare: (square: string | null) => void;
   highlightEnPassantSquare: (square: string[]) => void;
   removePieceFromSquare: (square: string) => void;
+}
+export interface IGetAllAttackingMoves {
+  color: Color;
+  table: ITableState;
+  enPassantSquare: string | null;
 }

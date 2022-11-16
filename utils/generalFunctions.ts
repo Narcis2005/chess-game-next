@@ -1,17 +1,11 @@
 import { getBishopAttackingMoves, getBishopAttackingMovesWithoutCheckingForCheck, getBishopMoves } from "./Bishop";
 import { createSquare, FILE_LETTER } from "./constants";
-import { Color, ITableState, Piece } from "./interfaces";
+import { Color, IGetAllAttackingMoves, ITableState, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingAttackingMovesWithoutCheckingForCheck, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightAttackingMovesWithoutCheckingForCheck, getKnightMoves } from "./Knight";
 import { getPawnAttackingMoves, getPawnAttackingMovesWithoutCheckingForCheck, getPawnMoves } from "./Pawn";
 import { getQueenAttackingMoves, getQueenAttackingMovesWithoutCheckingForCheck, getQueenMoves } from "./Queen";
 import { getRookAttackingMoves, getRookAttackingMovesWithoutCheckingForCheck, getRookMoves } from "./rook";
-
-interface IGetAllAttackingMoves {
-  color: Color;
-  table: ITableState;
-  enPassantSquare: string | null;
-}
 
 export const getAllAttackingMoves = ({ color, table, enPassantSquare }: IGetAllAttackingMoves): string[] | null => {
   const allAttackingMoves = [];
@@ -93,15 +87,7 @@ const getKingSquare = ({ table, color }: { table: ITableState; color: Color }) =
     if (table[square].type === Piece.king && table[square].color === color) return square;
   }
 };
-export const checkIfCheck = ({
-  table,
-  color,
-  enPassantSquare,
-}: {
-  table: ITableState;
-  color: Color;
-  enPassantSquare: string | null;
-}) => {
+export const checkIfCheck = ({ table, color, enPassantSquare }: { table: ITableState; color: Color; enPassantSquare: string | null }) => {
   const allAttackingMoves = getAllAttackingMoves({
     table: table,
     color: color == Color.white ? Color.black : Color.white,
@@ -115,7 +101,7 @@ export const checkIfCheck = ({
   }
   return false;
 };
-export const wouldItStillBeCheck = ({
+export const willBeCheck = ({
   table,
   color,
   square,
@@ -132,15 +118,12 @@ export const wouldItStillBeCheck = ({
 }) => {
   const oldSquare = {
     [`${file}${row}`]: createSquare({
-      piece: null,
       type: null,
-      isHighlighted: false,
-      isAttacked: false,
       color: null,
     }),
   };
   const newSquare = { [square]: { ...table[`${file}${row}`] } };
-  const newTable = { ...table, ...newSquare, ...oldSquare };
+  const newTable = { ...table, ...newSquare, ...oldSquare }; //An imaginary table, where the piece has been moved
   const response = checkIfCheck({ table: newTable, color, enPassantSquare });
 
   return response;
@@ -175,6 +158,8 @@ export const getAllLegalMoves = ({ color, table, enPassantSquare }: IGetAllAttac
           if (pawnLegalMoves) allLegalMoves.push(...pawnLegalMoves);
           if (pawnLegalAttackingMoves && pawnLegalAttackingMoves.attackingPossibleMoves)
             allLegalMoves.push(...pawnLegalAttackingMoves.attackingPossibleMoves);
+          if (pawnLegalAttackingMoves && pawnLegalAttackingMoves.enPassantMoves)
+            allLegalMoves.push(...pawnLegalAttackingMoves.enPassantMoves);
           break;
         case Piece.bishop:
           const bishopLegalMoves = getBishopMoves({ file, row, table, color, enPassantSquare });
@@ -211,6 +196,7 @@ export const getAllLegalMoves = ({ color, table, enPassantSquare }: IGetAllAttac
   }
   return allLegalMoves;
 };
+
 export const createFENFromTable = (table: ITableState, turn: Color, enPassantSquare: string | null) => {
   let FEN = "";
   for (let i = 8; i >= 1; i--) {

@@ -1,5 +1,5 @@
 import { FILE_LETTER } from "./constants";
-import { wouldItStillBeCheck } from "./generalFunctions";
+import { willBeCheck } from "./generalFunctions";
 import { Color, FileNumber, ITableState } from "./interfaces";
 
 interface IGetQueenMoves {
@@ -10,278 +10,281 @@ interface IGetQueenMoves {
   enPassantSquare: string | null;
 }
 
-export const getQueenAttackingMovesWithoutCheckingForCheck = ({
-  table,
-  file,
-  row,
-  color,
-}: IGetQueenMoves): string[] | null => {
+export const getQueenAttackingMovesWithoutCheckingForCheck = ({ table, file, row, color }: IGetQueenMoves): string[] | null => {
   const possibleMoves = [];
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
-  //   const oppositeColor = color === Color.white ? Color.black
+
+  // Left row
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - i - 1] + initialY] &&
-      table[FILE_LETTER[initialX - i - 1] + initialY]?.type !== null &&
-      table[FILE_LETTER[initialX - i - 1] + initialY]?.color !== color
-    ) {
-      possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
+    const leftRowSquare = FILE_LETTER[initialX - i - 1] + initialY;
+
+    if (table[leftRowSquare] && table[leftRowSquare]?.type !== null && table[leftRowSquare]?.color !== color) {
+      possibleMoves.push(leftRowSquare);
       break;
-    } else if (table[FILE_LETTER[initialX - i - 1] + initialY]?.color === color) break;
+    } else if (table[leftRowSquare]?.color === color) break;
   }
+
+  // Right row
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX + i - 1] + initialY] &&
-      table[FILE_LETTER[initialX + i - 1] + initialY]?.type !== null &&
-      table[FILE_LETTER[initialX + i - 1] + initialY]?.color !== color
-    ) {
-      possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
+    const rightRowSquare = FILE_LETTER[initialX + i - 1] + initialY;
+
+    if (table[rightRowSquare] && table[rightRowSquare]?.type !== null && table[rightRowSquare]?.color !== color) {
+      possibleMoves.push(rightRowSquare);
       break;
-    } else if (table[FILE_LETTER[initialX + i - 1] + initialY]?.color === color) break;
+    } else if (table[rightRowSquare]?.color === color) break;
   }
+
+  // Top file
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - 1] + (initialY + i)] &&
-      table[FILE_LETTER[initialX - 1] + (initialY + i)]?.type !== null &&
-      table[FILE_LETTER[initialX - 1] + (initialY + i)]?.color !== color
-    ) {
-      possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
+    const topFileSquare = FILE_LETTER[initialX - 1] + (initialY + i);
+
+    if (table[topFileSquare] && table[topFileSquare]?.type !== null && table[topFileSquare]?.color !== color) {
+      possibleMoves.push(topFileSquare);
       break;
-    } else if (table[FILE_LETTER[initialX - 1] + (initialY + i)]?.color === color) break;
+    } else if (table[topFileSquare]?.color === color) break;
   }
+
+  // Bottom row
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - 1] + (initialY - i)] &&
-      table[FILE_LETTER[initialX - 1] + (initialY - i)]?.type !== null &&
-      table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color !== color
-    ) {
-      possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
+    const bottomFileSquare = FILE_LETTER[initialX - 1] + (initialY - i);
+
+    if (table[bottomFileSquare] && table[bottomFileSquare]?.type !== null && table[bottomFileSquare]?.color !== color) {
+      possibleMoves.push(bottomFileSquare);
       break;
-    } else if (table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color === color) break;
+    } else if (table[bottomFileSquare]?.color === color) break;
   }
+
+  // Top-right diagonal
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX + i - 1] + (initialY + i)] &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.type !== null &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.color !== color
-    ) {
-      possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
+    const topRightDiagonalSquare = FILE_LETTER[initialX + i - 1] + (initialY + i);
+
+    if (table[topRightDiagonalSquare] && table[topRightDiagonalSquare]?.type !== null && table[topRightDiagonalSquare]?.color !== color) {
+      possibleMoves.push(topRightDiagonalSquare);
       break;
-    } else if (table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.color === color) break;
+    } else if (table[topRightDiagonalSquare]?.color === color) break;
   }
+
+  // Bottom-right diagonal
   for (let i = 1; i < 8; i++) {
+    const bottomRightDiagonalSquare = FILE_LETTER[initialX + i - 1] + (initialY - i);
+
     if (
-      table[FILE_LETTER[initialX + i - 1] + (initialY - i)] &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.type !== null &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.color !== color
+      table[bottomRightDiagonalSquare] &&
+      table[bottomRightDiagonalSquare]?.type !== null &&
+      table[bottomRightDiagonalSquare]?.color !== color
     ) {
-      possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
+      possibleMoves.push(bottomRightDiagonalSquare);
       break;
-    } else if (table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.color === color) break;
+    } else if (table[bottomRightDiagonalSquare]?.color === color) break;
   }
+
+  // Top-left diagonal
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - i - 1] + (initialY - i)] &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.type !== null &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.color !== color
-    ) {
-      possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
+    const topLeftDiagonalSquare = FILE_LETTER[initialX - i - 1] + (initialY + i);
+
+    if (table[topLeftDiagonalSquare] && table[topLeftDiagonalSquare]?.type !== null && table[topLeftDiagonalSquare]?.color !== color) {
+      possibleMoves.push(topLeftDiagonalSquare);
       break;
-    } else if (table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.color === color) break;
+    } else if (table[topLeftDiagonalSquare]?.color === color) break;
   }
+
+  // Bottom-left diagonal
   for (let i = 1; i < 8; i++) {
+    const bottomLeftDiagonalSquare = FILE_LETTER[initialX - i - 1] + (initialY - i);
+
     if (
-      table[FILE_LETTER[initialX - i - 1] + (initialY + i)] &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.type !== null &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.color !== color
+      table[bottomLeftDiagonalSquare] &&
+      table[bottomLeftDiagonalSquare]?.type !== null &&
+      table[bottomLeftDiagonalSquare]?.color !== color
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));
+      possibleMoves.push(bottomLeftDiagonalSquare);
       break;
-    } else if (table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.color === color) break;
+    } else if (table[bottomLeftDiagonalSquare]?.color === color) break;
   }
   return possibleMoves;
 };
-export const getQueenAttackingMoves = ({
-  table,
-  file,
-  row,
-  color,
-  enPassantSquare,
-}: IGetQueenMoves): string[] | null => {
+export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetQueenMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
-  //   const oppositeColor = color === Color.white ? Color.black
+
+  // Left row
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - i - 1] + initialY] &&
-      table[FILE_LETTER[initialX - i - 1] + initialY]?.type !== null &&
-      table[FILE_LETTER[initialX - i - 1] + initialY]?.color !== color
-    ) {
+    const leftRowSquare = FILE_LETTER[initialX - i - 1] + initialY;
+
+    if (table[leftRowSquare] && table[leftRowSquare]?.type !== null && table[leftRowSquare]?.color !== color) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - i - 1] + initialY,
+          square: leftRowSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
+        possibleMoves.push(leftRowSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX - i - 1] + initialY]?.color === color) break;
+    } else if (table[leftRowSquare]?.color === color) break;
   }
+
+  // Right row
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX + i - 1] + initialY] &&
-      table[FILE_LETTER[initialX + i - 1] + initialY]?.type !== null &&
-      table[FILE_LETTER[initialX + i - 1] + initialY]?.color !== color
-    ) {
+    const rightRowSquare = FILE_LETTER[initialX + i - 1] + initialY;
+
+    if (table[rightRowSquare] && table[rightRowSquare]?.type !== null && table[rightRowSquare]?.color !== color) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX + i - 1] + initialY,
+          square: rightRowSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
+        possibleMoves.push(rightRowSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX + i - 1] + initialY]?.color === color) break;
+    } else if (table[rightRowSquare]?.color === color) break;
   }
+
+  // Top file
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - 1] + (initialY + i)] &&
-      table[FILE_LETTER[initialX - 1] + (initialY + i)]?.type !== null &&
-      table[FILE_LETTER[initialX - 1] + (initialY + i)]?.color !== color
-    ) {
+    const topFileSquare = FILE_LETTER[initialX - 1] + (initialY + i);
+
+    if (table[topFileSquare] && table[topFileSquare]?.type !== null && table[topFileSquare]?.color !== color) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - 1] + (initialY + i),
+          square: topFileSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
+        possibleMoves.push(topFileSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX - 1] + (initialY + i)]?.color === color) break;
+    } else if (table[topFileSquare]?.color === color) break;
   }
+
+  // Bottom file
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - 1] + (initialY - i)] &&
-      table[FILE_LETTER[initialX - 1] + (initialY - i)]?.type !== null &&
-      table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color !== color
-    ) {
+    const bottomFileSquare = FILE_LETTER[initialX - 1] + (initialY - i);
+
+    if (table[bottomFileSquare] && table[bottomFileSquare]?.type !== null && table[bottomFileSquare]?.color !== color) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - 1] + (initialY - i),
+          square: bottomFileSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
+        possibleMoves.push(bottomFileSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX - 1] + (initialY - i)]?.color === color) break;
+    } else if (table[bottomFileSquare]?.color === color) break;
   }
+
+  //Top-right diagonal
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX + i - 1] + (initialY + i)] &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.type !== null &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.color !== color
-    ) {
+    const topRightDiagonalSquare = FILE_LETTER[initialX + i - 1] + (initialY + i);
+
+    if (table[topRightDiagonalSquare] && table[topRightDiagonalSquare]?.type !== null && table[topRightDiagonalSquare]?.color !== color) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX + i - 1] + (initialY + i),
+          square: topRightDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
+        possibleMoves.push(topRightDiagonalSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.color === color) break;
+    } else if (table[topRightDiagonalSquare]?.color === color) break;
   }
+
+  //Bottom-right diagonal
   for (let i = 1; i < 8; i++) {
+    const bottomRightDiagonalSquare = FILE_LETTER[initialX + i - 1] + (initialY - i);
+
     if (
-      table[FILE_LETTER[initialX + i - 1] + (initialY - i)] &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.type !== null &&
-      table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.color !== color
+      table[bottomRightDiagonalSquare] &&
+      table[bottomRightDiagonalSquare]?.type !== null &&
+      table[bottomRightDiagonalSquare]?.color !== color
     ) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX + i - 1] + (initialY - i),
+          square: bottomRightDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
+        possibleMoves.push(bottomRightDiagonalSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.color === color) break;
+    } else if (table[bottomRightDiagonalSquare]?.color === color) break;
   }
+
+  //Top-left diagonal
   for (let i = 1; i < 8; i++) {
-    if (
-      table[FILE_LETTER[initialX - i - 1] + (initialY - i)] &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.type !== null &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.color !== color
-    ) {
+    const topLeftDiagonalSquare = FILE_LETTER[initialX - i - 1] + (initialY + i);
+
+    if (table[topLeftDiagonalSquare] && table[topLeftDiagonalSquare]?.type !== null && table[topLeftDiagonalSquare]?.color !== color) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - i - 1] + (initialY - i),
+          square: topLeftDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
+        possibleMoves.push(topLeftDiagonalSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.color === color) break;
+    } else if (table[topLeftDiagonalSquare]?.color === color) break;
   }
+
+  //Bottom-left diagonal
   for (let i = 1; i < 8; i++) {
+    const bottomLeftDiagonalSquare = FILE_LETTER[initialX - i - 1] + (initialY - i);
+
     if (
-      table[FILE_LETTER[initialX - i - 1] + (initialY + i)] &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.type !== null &&
-      table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.color !== color
+      table[bottomLeftDiagonalSquare] &&
+      table[bottomLeftDiagonalSquare]?.type !== null &&
+      table[bottomLeftDiagonalSquare]?.color !== color
     ) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - i - 1] + (initialY + i),
+          square: bottomLeftDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));
+        possibleMoves.push(bottomLeftDiagonalSquare);
       }
       break;
-    } else if (table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.color === color) break;
+    } else if (table[bottomLeftDiagonalSquare]?.color === color) break;
   }
   return possibleMoves;
 };
@@ -291,131 +294,163 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
+
+  //Left row
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX - i - 1] + initialY]?.type === null) {
+    const leftRowSquare = FILE_LETTER[initialX - i - 1] + initialY;
+
+    if (table[leftRowSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - i - 1] + initialY,
+          square: leftRowSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - i - 1] + initialY);
+        possibleMoves.push(leftRowSquare);
       }
     } else break;
   }
+
+  //Right row
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX + i - 1] + initialY]?.type === null) {
+    const rightRowSquare = FILE_LETTER[initialX + i - 1] + initialY;
+
+    if (table[rightRowSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX + i - 1] + initialY,
+          square: rightRowSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX + i - 1] + initialY);
+        possibleMoves.push(rightRowSquare);
       }
     } else break;
   }
+
+  //Top file
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX - 1] + (initialY + i)]?.type === null) {
+    const topFileSquare = FILE_LETTER[initialX - 1] + (initialY + i);
+
+    if (table[topFileSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - 1] + (initialY + i),
+          square: topFileSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + i));
+        possibleMoves.push(topFileSquare);
       }
     } else break;
   }
+
+  //Bottom file
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX - 1] + (initialY - i)]?.type === null) {
+    const bottomFileSquare = FILE_LETTER[initialX - 1] + (initialY - i);
+
+    if (table[bottomFileSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - 1] + (initialY - i),
+          square: bottomFileSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - i));
+        possibleMoves.push(bottomFileSquare);
       }
     } else break;
   }
+
+  //Top-right diagonal
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX + i - 1] + (initialY + i)]?.type === null) {
+    const topRightDiagonalSquare = FILE_LETTER[initialX + i - 1] + (initialY + i);
+
+    if (table[topRightDiagonalSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX + i - 1] + (initialY + i),
+          square: topRightDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY + i));
+        possibleMoves.push(topRightDiagonalSquare);
       }
     } else break;
   }
+
+  //Bottom-right diagonal
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX + i - 1] + (initialY - i)]?.type === null) {
+    const bottomRightDiagonalSquare = FILE_LETTER[initialX + i - 1] + (initialY - i);
+
+    if (table[bottomRightDiagonalSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX + i - 1] + (initialY - i),
+          square: bottomRightDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX + i - 1] + (initialY - i));
+        possibleMoves.push(bottomRightDiagonalSquare);
       }
     } else break;
   }
+
+  //Top-left diagonal
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX - i - 1] + (initialY - i)]?.type === null) {
+    const topLeftDiagonalSquare = FILE_LETTER[initialX - i - 1] + (initialY + i);
+
+    if (table[topLeftDiagonalSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - i - 1] + (initialY - i),
+          square: topLeftDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY - i));
+        possibleMoves.push(topLeftDiagonalSquare);
       }
     } else break;
   }
+
+  //Bottom-left diagonal
   for (let i = 1; i < 8; i++) {
-    if (table[FILE_LETTER[initialX - i - 1] + (initialY + i)]?.type === null) {
+    const bottomLeftDiagonalSquare = FILE_LETTER[initialX - i - 1] + (initialY - i);
+
+    if (table[bottomLeftDiagonalSquare]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           color: color,
-          square: FILE_LETTER[initialX - i - 1] + (initialY + i),
+          square: bottomLeftDiagonalSquare,
           row,
           file,
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(FILE_LETTER[initialX - i - 1] + (initialY + i));
+        possibleMoves.push(bottomLeftDiagonalSquare);
       }
     } else break;
   }

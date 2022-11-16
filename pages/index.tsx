@@ -38,8 +38,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const setCheck = () => {
-      if (checkIfCheck({ table: tableState, color: turn, enPassantSquare: enPassantSquare.current }))
-        isCheck.current = true;
+      if (checkIfCheck({ table: tableState, color: turn, enPassantSquare: enPassantSquare.current })) isCheck.current = true;
       const allLegalMoves = getAllLegalMoves({
         table: tableState,
         color: turn,
@@ -84,7 +83,7 @@ const Home: NextPage = () => {
   const movePieceToSquare = (square: string, pieceToMove?: ITableState) => {
     const piece = pieceToMove ? pieceToMove : selectedPiece;
     const emptySquare = {
-      [Object.keys(piece)[0]]: createSquare({ piece: null, color: null, type: null }),
+      [Object.keys(piece)[0]]: createSquare({ color: null, type: null }),
     };
     const newSquare = {
       [square]: {
@@ -124,7 +123,7 @@ const Home: NextPage = () => {
   };
   const removePieceFromSquare = (square: string) => {
     const emptySquare = {
-      [square]: createSquare({ piece: null, color: null, type: null }),
+      [square]: createSquare({ color: null, type: null }),
     };
     setTableState((oldState) => {
       return { ...oldState, ...emptySquare };
@@ -169,12 +168,7 @@ const Home: NextPage = () => {
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (
-                        <Image
-                          src={"/" + tableState[letter + (8 - squareIndex)].piece + ".png"}
-                          alt=""
-                          width={80}
-                          height={80}
-                        />
+                        <Image src={"/" + tableState[letter + (8 - squareIndex)].piece + ".png"} alt="" width={80} height={80} />
                       ) : null}
                     </Square>
                   );

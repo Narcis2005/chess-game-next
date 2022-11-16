@@ -1,5 +1,5 @@
 import { FILE_LETTER } from "./constants";
-import { wouldItStillBeCheck } from "./generalFunctions";
+import { willBeCheck } from "./generalFunctions";
 import { Color, FileNumber, ITableState } from "./interfaces";
 interface IGetKnightMoves {
   table: ITableState;
@@ -8,12 +8,7 @@ interface IGetKnightMoves {
   color: Color | null;
   enPassantSquare: string | null;
 }
-export const getKnightAttackingMovesWithoutCheckingForCheck = ({
-  table,
-  file,
-  row,
-  color,
-}: IGetKnightMoves): string[] | null => {
+export const getKnightAttackingMovesWithoutCheckingForCheck = ({ table, file, row, color }: IGetKnightMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -41,13 +36,7 @@ export const getKnightAttackingMovesWithoutCheckingForCheck = ({
   }
   return possibleMoves;
 };
-export const getKnightAttackingMoves = ({
-  table,
-  file,
-  row,
-  color,
-  enPassantSquare,
-}: IGetKnightMoves): string[] | null => {
+export const getKnightAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetKnightMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
@@ -62,7 +51,7 @@ export const getKnightAttackingMoves = ({
         table[FILE_LETTER[verticalMove.x - 1] + verticalMove.y]?.color !== color
       ) {
         if (
-          !wouldItStillBeCheck({
+          !willBeCheck({
             table: table,
             color: color,
             square: FILE_LETTER[verticalMove.x - 1] + verticalMove.y,
@@ -81,7 +70,7 @@ export const getKnightAttackingMoves = ({
         table[FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y]?.color !== color
       ) {
         if (
-          !wouldItStillBeCheck({
+          !willBeCheck({
             table: table,
             square: FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y,
             row,
@@ -109,7 +98,7 @@ export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGe
       const horizontalMove = { x: FileNumber[file as keyof typeof FileNumber] + i * 2, y: row + j };
       if (table[FILE_LETTER[verticalMove.x - 1] + verticalMove.y]?.type === null) {
         if (
-          !wouldItStillBeCheck({
+          !willBeCheck({
             table: table,
             row,
             file,
@@ -124,7 +113,7 @@ export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGe
 
       if (table[FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y]?.type === null) {
         if (
-          !wouldItStillBeCheck({
+          !willBeCheck({
             table: table,
             row,
             file,

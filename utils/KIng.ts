@@ -1,5 +1,5 @@
 import { FILE_LETTER } from "./constants";
-import { wouldItStillBeCheck } from "./generalFunctions";
+import { willBeCheck } from "./generalFunctions";
 import { Color, FileNumber, ITableState, Piece } from "./interfaces";
 
 interface IGetKingMoves {
@@ -58,7 +58,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const squareAboveKing = FILE_LETTER[initialX - 1] + (initialY + 1);
   if (table[squareAboveKing] && table[squareAboveKing]?.type !== null && table[squareAboveKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: squareAboveKing,
@@ -73,7 +73,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
   if (table[rightSquareAboveKing] && table[rightSquareAboveKing]?.type !== null && table[rightSquareAboveKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: rightSquareAboveKing,
@@ -88,7 +88,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
   if (table[leftSquareAboveKing] && table[leftSquareAboveKing]?.type !== null && table[leftSquareAboveKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: leftSquareAboveKing,
@@ -103,7 +103,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
   if (table[leftSquareNextToKing] && table[leftSquareNextToKing]?.type !== null && table[leftSquareNextToKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: leftSquareNextToKing,
@@ -118,7 +118,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
   if (table[rightSquareNextToKing] && table[rightSquareNextToKing]?.type !== null && table[rightSquareNextToKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: rightSquareNextToKing,
@@ -133,7 +133,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
   if (table[leftSquareBelowKing] && table[leftSquareBelowKing]?.type !== null && table[leftSquareBelowKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: leftSquareBelowKing,
@@ -148,7 +148,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
   if (table[squareBelowKing] && table[squareBelowKing]?.type !== null && table[squareBelowKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: squareBelowKing,
@@ -163,7 +163,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
   const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
   if (table[rightSquareBelowKing] && table[rightSquareBelowKing]?.type !== null && table[rightSquareBelowKing]?.color !== color) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: rightSquareBelowKing,
@@ -191,7 +191,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const squareAboveKing = FILE_LETTER[initialX - 1] + (initialY + 1);
   if (table[squareAboveKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: squareAboveKing,
@@ -206,7 +206,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
   if (table[rightSquareAboveKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: rightSquareAboveKing,
@@ -221,7 +221,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
   if (table[leftSquareAboveKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: leftSquareAboveKing,
@@ -236,7 +236,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
   if (table[leftSquareNextToKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: leftSquareNextToKing,
@@ -251,7 +251,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
   if (table[rightSquareNextToKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: rightSquareNextToKing,
@@ -266,7 +266,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
   if (table[leftSquareBelowKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: leftSquareBelowKing,
@@ -281,7 +281,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
   if (table[squareBelowKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: squareBelowKing,
@@ -296,7 +296,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
   const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
   if (table[rightSquareBelowKing]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         color: color,
         square: rightSquareBelowKing,
@@ -318,7 +318,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
     table[FILE_LETTER[initialX + 2] + initialY]?.color === color && //check if the fourth right square is the right color
     table[FILE_LETTER[initialX + 2] + initialY]?.hasMoved === false && // check if the rook has ever moved
     table[FILE_LETTER[initialX - 1] + initialY]?.hasMoved === false && // check if the king has ever moved
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX - 1] + initialY,
@@ -326,7 +326,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
       file,
       enPassantSquare,
     }) && //check if the king is in check
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX] + initialY,
@@ -334,7 +334,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
       file,
       enPassantSquare,
     }) && //check if the king will be in check when it passes through the first right square
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX + 1] + initialY,
@@ -354,7 +354,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
     table[FILE_LETTER[initialX - 5] + initialY]?.color === color && // check if the rook color is the good color
     table[FILE_LETTER[initialX - 5] + initialY]?.hasMoved === false && // check if the rook has ever moved
     table[FILE_LETTER[initialX - 1] + initialY]?.hasMoved === false && //check if the king has ever moved
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX - 1] + initialY,
@@ -362,7 +362,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
       file,
       enPassantSquare,
     }) && //check if the king is in check
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX - 2] + initialY,
@@ -370,7 +370,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
       file,
       enPassantSquare,
     }) && //check if the king will be in check when it passes through the first left square
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX - 3] + initialY,
@@ -378,7 +378,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
       file,
       enPassantSquare,
     }) && //check if the king will be in check when it passes through the second left square
-    !wouldItStillBeCheck({
+    !willBeCheck({
       table: table,
       color: color,
       square: FILE_LETTER[initialX - 4] + initialY,

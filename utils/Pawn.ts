@@ -1,5 +1,5 @@
 import { createSquare, FILE_LETTER, PAWN_STARTING_POSITIONS } from "./constants";
-import { wouldItStillBeCheck } from "./generalFunctions";
+import { willBeCheck } from "./generalFunctions";
 import { Color, FileNumber, ITableState } from "./interfaces";
 
 interface IGetPawnMoves {
@@ -41,7 +41,7 @@ export const getPawnAttackingMovesWithoutCheckingForCheck = ({
   ) {
     attackingPossibleMoves.push(FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient));
   }
-
+  //add en passant here
   return attackingPossibleMoves;
 };
 export const getPawnAttackingMoves = ({
@@ -69,7 +69,7 @@ export const getPawnAttackingMoves = ({
     table[FILE_LETTER[initialX] + (initialY + -1 * turnCoeficient)]?.color !== color
   ) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         row,
         file,
@@ -87,7 +87,7 @@ export const getPawnAttackingMoves = ({
     table[FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient)]?.color !== color
   ) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         row,
         file,
@@ -111,10 +111,10 @@ export const getPawnAttackingMoves = ({
   ) {
     const tableWithoutCapturedEnPassantPawn = {
       ...table,
-      [enPassantSquare]: createSquare({ piece: null, color: null, type: null }),
+      [enPassantSquare]: createSquare({ color: null, type: null }),
     };
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: tableWithoutCapturedEnPassantPawn,
         row,
         file,
@@ -137,10 +137,10 @@ export const getPawnAttackingMoves = ({
   ) {
     const tableWithoutCapturedEnPassantPawn = {
       ...table,
-      [enPassantSquare]: createSquare({ piece: null, color: null, type: null }),
+      [enPassantSquare]: createSquare({ color: null, type: null }),
     };
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: tableWithoutCapturedEnPassantPawn,
         row,
         file,
@@ -155,21 +155,13 @@ export const getPawnAttackingMoves = ({
 
   return { attackingPossibleMoves, enPassantMoves };
 };
-export const getPawnMoves = ({
-  table,
-  file,
-  row,
-  turnCoeficient,
-  squareName,
-  color,
-  enPassantSquare,
-}: IGetPawnMoves): string[] | null => {
+export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, color, enPassantSquare }: IGetPawnMoves): string[] | null => {
   if (color === undefined || color === null) return null;
 
   if (!PAWN_STARTING_POSITIONS.includes(squareName)) {
     if (table[file + (row + -1 * turnCoeficient)].type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           row,
           file,
@@ -186,7 +178,7 @@ export const getPawnMoves = ({
 
   if (table[file + (row + -2 * turnCoeficient)]?.type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         row,
         file,
@@ -197,7 +189,7 @@ export const getPawnMoves = ({
     ) {
       if (table[file + (row + -1 * turnCoeficient)]?.type === null) {
         if (
-          !wouldItStillBeCheck({
+          !willBeCheck({
             table: table,
             row,
             file,
@@ -211,7 +203,7 @@ export const getPawnMoves = ({
       }
     } else if (table[file + (row + -1 * turnCoeficient)]?.type === null) {
       if (
-        !wouldItStillBeCheck({
+        !willBeCheck({
           table: table,
           row,
           file,
@@ -225,7 +217,7 @@ export const getPawnMoves = ({
     }
   } else if (table[file + (row + -1 * turnCoeficient)].type === null) {
     if (
-      !wouldItStillBeCheck({
+      !willBeCheck({
         table: table,
         row,
         file,
