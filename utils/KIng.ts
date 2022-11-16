@@ -9,73 +9,43 @@ interface IGetKingMoves {
   color: Color | null;
   enPassantSquare: string | null;
 }
-export const getKingAttackingMovesWithoutCheckingForCheck = ({
-  table,
-  file,
-  row,
-  color,
-}: IGetKingMoves): string[] | null => {
+export const getKingAttackingMovesWithoutCheckingForCheck = ({ table, file, row, color }: IGetKingMoves): string[] | null => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return possibleMoves;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
-  if (
-    table[FILE_LETTER[initialX - 1] + (initialY + 1)] &&
-    table[FILE_LETTER[initialX - 1] + (initialY + 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 1] + (initialY + 1)]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + 1));
+  const squareAboveKing = FILE_LETTER[initialX - 1] + (initialY + 1);
+  if (table[squareAboveKing] && table[squareAboveKing]?.type !== null && table[squareAboveKing]?.color !== color) {
+    possibleMoves.push(squareAboveKing);
   }
-
-  if (
-    table[FILE_LETTER[initialX] + (initialY + 1)] &&
-    table[FILE_LETTER[initialX] + (initialY + 1)]?.type !== null &&
-    table[FILE_LETTER[initialX] + (initialY + 1)]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX] + (initialY + 1));
+  const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
+  if (table[rightSquareAboveKing] && table[rightSquareAboveKing]?.type !== null && table[rightSquareAboveKing]?.color !== color) {
+    possibleMoves.push(rightSquareAboveKing);
   }
-  if (
-    table[FILE_LETTER[initialX - 2] + (initialY + 1)] &&
-    table[FILE_LETTER[initialX - 2] + (initialY + 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 2] + (initialY + 1)]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX - 2] + (initialY + 1));
+  const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
+  if (table[leftSquareAboveKing] && table[leftSquareAboveKing]?.type !== null && table[leftSquareAboveKing]?.color !== color) {
+    possibleMoves.push(leftSquareAboveKing);
   }
-  if (
-    table[FILE_LETTER[initialX - 2] + initialY] &&
-    table[FILE_LETTER[initialX - 2] + initialY]?.type !== null &&
-    table[FILE_LETTER[initialX - 2] + initialY]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX - 2] + initialY);
+  const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
+  if (table[leftSquareNextToKing] && table[leftSquareNextToKing]?.type !== null && table[leftSquareNextToKing]?.color !== color) {
+    possibleMoves.push(leftSquareNextToKing);
   }
-  if (
-    table[FILE_LETTER[initialX] + initialY] &&
-    table[FILE_LETTER[initialX] + initialY]?.type !== null &&
-    table[FILE_LETTER[initialX] + initialY]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX] + initialY);
+  const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
+  if (table[rightSquareNextToKing] && table[rightSquareNextToKing]?.type !== null && table[rightSquareNextToKing]?.color !== color) {
+    possibleMoves.push(rightSquareNextToKing);
   }
-  if (
-    table[FILE_LETTER[initialX - 2] + (initialY - 1)] &&
-    table[FILE_LETTER[initialX - 2] + (initialY - 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 2] + (initialY - 1)]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX - 2] + (initialY - 1));
+  const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
+  if (table[leftSquareBelowKing] && table[leftSquareBelowKing]?.type !== null && table[leftSquareBelowKing]?.color !== color) {
+    possibleMoves.push(leftSquareBelowKing);
   }
-  if (
-    table[FILE_LETTER[initialX - 1] + (initialY - 1)] &&
-    table[FILE_LETTER[initialX - 1] + (initialY - 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 1] + (initialY - 1)]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - 1));
+  const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
+  if (table[squareBelowKing] && table[squareBelowKing]?.type !== null && table[squareBelowKing]?.color !== color) {
+    possibleMoves.push(squareBelowKing);
   }
-  if (
-    table[FILE_LETTER[initialX] + (initialY - 1)] &&
-    table[FILE_LETTER[initialX] + (initialY - 1)]?.type !== null &&
-    table[FILE_LETTER[initialX] + (initialY - 1)]?.color !== color
-  ) {
-    possibleMoves.push(FILE_LETTER[initialX] + (initialY - 1));
+  const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
+  if (table[rightSquareBelowKing] && table[rightSquareBelowKing]?.type !== null && table[rightSquareBelowKing]?.color !== color) {
+    possibleMoves.push(rightSquareBelowKing);
   }
   return possibleMoves;
 };
@@ -85,149 +55,124 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
-  if (
-    table[FILE_LETTER[initialX - 1] + (initialY + 1)] &&
-    table[FILE_LETTER[initialX - 1] + (initialY + 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 1] + (initialY + 1)]?.color !== color
-  ) {
+  const squareAboveKing = FILE_LETTER[initialX - 1] + (initialY + 1);
+  if (table[squareAboveKing] && table[squareAboveKing]?.type !== null && table[squareAboveKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 1] + (initialY + 1),
+        square: squareAboveKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + 1));
+      possibleMoves.push(squareAboveKing);
     }
   }
-
-  if (
-    table[FILE_LETTER[initialX] + (initialY + 1)] &&
-    table[FILE_LETTER[initialX] + (initialY + 1)]?.type !== null &&
-    table[FILE_LETTER[initialX] + (initialY + 1)]?.color !== color
-  ) {
+  const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
+  if (table[rightSquareAboveKing] && table[rightSquareAboveKing]?.type !== null && table[rightSquareAboveKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX] + (initialY + 1),
+        square: rightSquareAboveKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX] + (initialY + 1));
+      possibleMoves.push(rightSquareAboveKing);
     }
   }
-  if (
-    table[FILE_LETTER[initialX - 2] + (initialY + 1)] &&
-    table[FILE_LETTER[initialX - 2] + (initialY + 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 2] + (initialY + 1)]?.color !== color
-  ) {
+  const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
+  if (table[leftSquareAboveKing] && table[leftSquareAboveKing]?.type !== null && table[leftSquareAboveKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 2] + (initialY + 1),
+        square: leftSquareAboveKing,
         row,
         enPassantSquare,
         file,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 2] + (initialY + 1));
+      possibleMoves.push(leftSquareAboveKing);
     }
   }
-  if (
-    table[FILE_LETTER[initialX - 2] + initialY] &&
-    table[FILE_LETTER[initialX - 2] + initialY]?.type !== null &&
-    table[FILE_LETTER[initialX - 2] + initialY]?.color !== color
-  ) {
+  const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
+  if (table[leftSquareNextToKing] && table[leftSquareNextToKing]?.type !== null && table[leftSquareNextToKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 2] + initialY,
+        square: leftSquareNextToKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 2] + initialY);
+      possibleMoves.push(leftSquareNextToKing);
     }
   }
-  if (
-    table[FILE_LETTER[initialX] + initialY] &&
-    table[FILE_LETTER[initialX] + initialY]?.type !== null &&
-    table[FILE_LETTER[initialX] + initialY]?.color !== color
-  ) {
+  const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
+  if (table[rightSquareNextToKing] && table[rightSquareNextToKing]?.type !== null && table[rightSquareNextToKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX] + initialY,
+        square: rightSquareNextToKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX] + initialY);
+      possibleMoves.push(rightSquareNextToKing);
     }
   }
-  if (
-    table[FILE_LETTER[initialX - 2] + (initialY - 1)] &&
-    table[FILE_LETTER[initialX - 2] + (initialY - 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 2] + (initialY - 1)]?.color !== color
-  ) {
+  const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
+  if (table[leftSquareBelowKing] && table[leftSquareBelowKing]?.type !== null && table[leftSquareBelowKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 2] + (initialY - 1),
+        square: leftSquareBelowKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 2] + (initialY - 1));
+      possibleMoves.push(leftSquareBelowKing);
     }
   }
-  if (
-    table[FILE_LETTER[initialX - 1] + (initialY - 1)] &&
-    table[FILE_LETTER[initialX - 1] + (initialY - 1)]?.type !== null &&
-    table[FILE_LETTER[initialX - 1] + (initialY - 1)]?.color !== color
-  ) {
+  const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
+  if (table[squareBelowKing] && table[squareBelowKing]?.type !== null && table[squareBelowKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 1] + (initialY - 1),
+        square: squareBelowKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - 1));
+      possibleMoves.push(squareBelowKing);
     }
   }
-  if (
-    table[FILE_LETTER[initialX] + (initialY - 1)] &&
-    table[FILE_LETTER[initialX] + (initialY - 1)]?.type !== null &&
-    table[FILE_LETTER[initialX] + (initialY - 1)]?.color !== color
-  ) {
+  const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
+  if (table[rightSquareBelowKing] && table[rightSquareBelowKing]?.type !== null && table[rightSquareBelowKing]?.color !== color) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX] + (initialY - 1),
+        square: rightSquareBelowKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX] + (initialY - 1));
+      possibleMoves.push(rightSquareBelowKing);
     }
   }
   return possibleMoves;
@@ -237,129 +182,130 @@ interface IGetKingMovesReturn {
   kingSideCastling: boolean;
   queenSideCastling: boolean;
 }
-export const getKingMoves = ({
-  table,
-  file,
-  row,
-  color,
-  enPassantSquare,
-}: IGetKingMoves): null | IGetKingMovesReturn => {
+export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetKingMoves): null | IGetKingMovesReturn => {
   const possibleMoves: string[] | null = [];
   if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
-  if (table[FILE_LETTER[initialX - 1] + (initialY + 1)]?.type === null) {
+  const squareAboveKing = FILE_LETTER[initialX - 1] + (initialY + 1);
+  if (table[squareAboveKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 1] + (initialY + 1),
+        square: squareAboveKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY + 1));
+      possibleMoves.push(squareAboveKing);
     }
   }
-
-  if (table[FILE_LETTER[initialX] + (initialY + 1)]?.type === null) {
+  const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
+  if (table[rightSquareAboveKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX] + (initialY + 1),
+        square: rightSquareAboveKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX] + (initialY + 1));
+      possibleMoves.push(rightSquareAboveKing);
     }
   }
-  if (table[FILE_LETTER[initialX - 2] + (initialY + 1)]?.type === null) {
+  const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
+  if (table[leftSquareAboveKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 2] + (initialY + 1),
+        square: leftSquareAboveKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 2] + (initialY + 1));
+      possibleMoves.push(leftSquareAboveKing);
     }
   }
-  if (table[FILE_LETTER[initialX - 2] + initialY]?.type === null) {
+  const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
+  if (table[leftSquareNextToKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 2] + initialY,
+        square: leftSquareNextToKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 2] + initialY);
+      possibleMoves.push(leftSquareNextToKing);
     }
   }
-  if (table[FILE_LETTER[initialX] + initialY]?.type === null) {
+  const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
+  if (table[rightSquareNextToKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX] + initialY,
+        square: rightSquareNextToKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX] + initialY);
+      possibleMoves.push(rightSquareNextToKing);
     }
   }
-  if (table[FILE_LETTER[initialX - 2] + (initialY - 1)]?.type === null) {
+  const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
+  if (table[leftSquareBelowKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 2] + (initialY - 1),
+        square: leftSquareBelowKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 2] + (initialY - 1));
+      possibleMoves.push(leftSquareBelowKing);
     }
   }
-  if (table[FILE_LETTER[initialX - 1] + (initialY - 1)]?.type === null) {
+  const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
+  if (table[squareBelowKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX - 1] + (initialY - 1),
+        square: squareBelowKing,
         row,
         file,
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX - 1] + (initialY - 1));
+      possibleMoves.push(squareBelowKing);
     }
   }
-  if (table[FILE_LETTER[initialX] + (initialY - 1)]?.type === null) {
+  const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
+  if (table[rightSquareBelowKing]?.type === null) {
     if (
       !wouldItStillBeCheck({
         table: table,
         color: color,
-        square: FILE_LETTER[initialX] + (initialY - 1),
+        square: rightSquareBelowKing,
         row,
         enPassantSquare,
         file,
       })
     ) {
-      possibleMoves.push(FILE_LETTER[initialX] + (initialY - 1));
+      possibleMoves.push(rightSquareBelowKing);
     }
   }
   let kingSideCastling = false;

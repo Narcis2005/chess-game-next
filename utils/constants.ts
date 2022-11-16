@@ -1,23 +1,8 @@
 import { Color, ICreateSquare, ISquare, ITableState, Piece } from "./interfaces";
+
+//If you see anywhere in the project FILE_LETTER[index - 1] and you are confused about the -1, it's because this array is 0 indexed. FILE_LETTER[index - 1] will represent the current file
 export const FILE_LETTER = ["a", "b", "c", "d", "e", "f", "g", "h"];
-export const PAWN_STARTING_POSITIONS = [
-  "a2",
-  "a7",
-  "b2",
-  "b7",
-  "c2",
-  "c7",
-  "d2",
-  "d7",
-  "e2",
-  "e7",
-  "f2",
-  "f7",
-  "g2",
-  "g7",
-  "h2",
-  "h7",
-];
+export const PAWN_STARTING_POSITIONS = ["a2", "a7", "b2", "b7", "c2", "c7", "d2", "d7", "e2", "e7", "f2", "f7", "g2", "g7", "h2", "h7"];
 
 const CreateInitialState = (): ITableState => {
   const initialState: ITableState = {};
@@ -37,14 +22,7 @@ const CreateInitialState = (): ITableState => {
   return initialState;
 };
 
-export const createSquare = ({
-  piece,
-  type,
-  isHighlighted,
-  isAttacked,
-  color,
-  hasMoved = false,
-}: ICreateSquare): ISquare => {
+export const createSquare = ({ piece, type, isHighlighted, isAttacked, color, hasMoved = false }: ICreateSquare): ISquare => {
   return {
     piece: piece,
     type: type,
