@@ -1,6 +1,6 @@
 import { getBishopAttackingMoves, getBishopAttackingMovesWithoutCheckingForCheck, getBishopMoves } from "./Bishop";
 import { createSquare, FILE_LETTER } from "./constants";
-import { Color, IGetAllAttackingMoves, ITableState, Piece } from "./interfaces";
+import { Color, IGetAllAttackingMoves, IHandleMovePieceToSquareWhenHighlighted, ITableState, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingAttackingMovesWithoutCheckingForCheck, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightAttackingMovesWithoutCheckingForCheck, getKnightMoves } from "./Knight";
 import { getPawnAttackingMoves, getPawnAttackingMovesWithoutCheckingForCheck, getPawnMoves } from "./Pawn";
@@ -327,4 +327,57 @@ export const createFENFromTable = (table: ITableState, turn: Color, enPassantSqu
     FEN += " " + enPassantSquare;
   } else FEN += " -";
   return FEN;
+};
+
+export const handleMovePieceToSquareWhenHighlighted = ({
+  movePieceToSquare,
+  square,
+  squareName,
+  selectedPiece,
+  turnCoeficient,
+  initialY,
+  setEnPassantSquare,
+  changeTurn,
+  initialX,
+  table,
+  removePieceFromSquare,
+}: IHandleMovePieceToSquareWhenHighlighted) => {
+  if (
+    (square[squareName].isHighlighted && square[squareName].piece === null) || //if piece can go to square (because is highlighted)
+    square[squareName].isAttacked //if piece can capture piece
+  ) {
+    if (
+      selectedPiece[Object.keys(selectedPiece)[0]].type === Piece.pawn &&
+      +Object.keys(selectedPiece)[0].split("")[1] - 2 * turnCoeficient === initialY
+    ) {
+      setEnPassantSquare(squareName);
+    } else setEnPassantSquare(null);
+    movePieceToSquare(squareName);
+    changeTurn();
+    return true;
+  }
+  if (square[squareName].isKingCastlingSquare) {
+    movePieceToSquare(squareName); // move the king to the castling square
+    movePieceToSquare(FILE_LETTER[initialX - 2] + initialY, {
+      [FILE_LETTER[initialX] + initialY]: table[FILE_LETTER[initialX] + initialY], // move the rook to the left of the king
+    });
+    changeTurn();
+    return true;
+  }
+  if (square[squareName].isQueenCastlingSquare) {
+    movePieceToSquare(squareName); // move the king to the castling square
+    movePieceToSquare(FILE_LETTER[initialX] + initialY, {
+      [FILE_LETTER[initialX - 3] + initialY]: table[FILE_LETTER[initialX - 3] + initialY], // move the rook to the left of the king
+    });
+    changeTurn();
+    return true;
+  }
+  if (square[squareName].isEnPassantMovingSquare) {
+    const capturedEnPassantPawn = squareName.split("")[0] + (+squareName.split("")[1] + 1 * turnCoeficient);
+    movePieceToSquare(squareName);
+    removePieceFromSquare(capturedEnPassantPawn);
+    changeTurn();
+    return true;
+  }
+  return false;
 };

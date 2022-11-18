@@ -1,7 +1,6 @@
 import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
 import { FILE_LETTER } from "./constants";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { createFENFromTable } from "./generalFunctions";
+import { createFENFromTable, handleMovePieceToSquareWhenHighlighted } from "./generalFunctions";
 import { Color, FileNumber, IOnClickSquare, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
@@ -33,44 +32,20 @@ const onClickSquare = ({
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
   const turnCoeficient = turn === Color.black ? 1 : -1;
-
-  if (
-    (square[squareName].isHighlighted && square[squareName].piece === null) || //if piece can go to square (because is highlighted)
-    square[squareName].isAttacked //if piece can capture piece
-  ) {
-    if (
-      selectedPiece[Object.keys(selectedPiece)[0]].type === Piece.pawn &&
-      +Object.keys(selectedPiece)[0].split("")[1] - 2 * turnCoeficient === initialY
-    ) {
-      setEnPassantSquare(squareName);
-    } else setEnPassantSquare(null);
-    movePieceToSquare(squareName);
-    changeTurn();
-    return;
-  }
-  if (square[squareName].isKingCastlingSquare) {
-    movePieceToSquare(squareName); // move the king to the castling square
-    movePieceToSquare(FILE_LETTER[initialX - 2] + initialY, {
-      [FILE_LETTER[initialX] + initialY]: table[FILE_LETTER[initialX] + initialY], // move the rook to the left of the king
-    });
-    changeTurn();
-    return;
-  }
-  if (square[squareName].isQueenCastlingSquare) {
-    movePieceToSquare(squareName); // move the king to the castling square
-    movePieceToSquare(FILE_LETTER[initialX] + initialY, {
-      [FILE_LETTER[initialX - 3] + initialY]: table[FILE_LETTER[initialX - 3] + initialY], // move the rook to the left of the king
-    });
-    changeTurn();
-    return;
-  }
-  if (square[squareName].isEnPassantMovingSquare) {
-    const capturedEnPassantPawn = squareName.split("")[0] + (+squareName.split("")[1] + 1 * turnCoeficient);
-    movePieceToSquare(squareName);
-    removePieceFromSquare(capturedEnPassantPawn);
-    changeTurn();
-    return;
-  }
+  const hasPieceMoved = handleMovePieceToSquareWhenHighlighted({
+    removePieceFromSquare,
+    table,
+    square,
+    squareName,
+    changeTurn,
+    setEnPassantSquare,
+    selectedPiece,
+    movePieceToSquare,
+    turnCoeficient,
+    initialX,
+    initialY,
+  });
+  if (hasPieceMoved) return;
   console.log(createFENFromTable(table, turn, enPassantSquare));
   setSelectedPiece(square);
 
@@ -96,8 +71,7 @@ const onClickSquare = ({
     highlightSquares(squares);
     if (attackingPawnsInfo && attackingPawnsInfo.attackingPossibleMoves)
       highlightAttackingSquares(attackingPawnsInfo.attackingPossibleMoves);
-    if (attackingPawnsInfo && attackingPawnsInfo.enPassantMoves)
-      highlightEnPassantSquare(attackingPawnsInfo.enPassantMoves);
+    if (attackingPawnsInfo && attackingPawnsInfo.enPassantMoves) highlightEnPassantSquare(attackingPawnsInfo.enPassantMoves);
   } else if (square[squareName].type === Piece.knight && square[squareName].color === turn) {
     const squares = getKnightMoves({ table, file, row, color: square[squareName].color, enPassantSquare });
     const attackingSquares = getKnightAttackingMoves({
@@ -152,10 +126,8 @@ const onClickSquare = ({
       enPassantSquare,
     });
     if (kingMovesInfo && kingMovesInfo.moves) highlightSquares(kingMovesInfo.moves);
-    if (kingMovesInfo && kingMovesInfo.kingSideCastling)
-      highlightCastlingSquare(FILE_LETTER[initialX + 1] + initialY, true);
-    if (kingMovesInfo && kingMovesInfo.queenSideCastling)
-      highlightCastlingSquare(FILE_LETTER[initialX - 3] + initialY, false);
+    if (kingMovesInfo && kingMovesInfo.kingSideCastling) highlightCastlingSquare(FILE_LETTER[initialX + 1] + initialY, true);
+    if (kingMovesInfo && kingMovesInfo.queenSideCastling) highlightCastlingSquare(FILE_LETTER[initialX - 3] + initialY, false);
 
     highlightAttackingSquares(attackingSquares);
   }

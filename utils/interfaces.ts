@@ -61,3 +61,16 @@ export interface IGetAllAttackingMoves {
   table: ITableState;
   enPassantSquare: string | null;
 }
+export interface IHandleMovePieceToSquareWhenHighlighted {
+  movePieceToSquare: (square: string, piece?: ITableState) => void;
+  square: ITableState;
+  squareName: string;
+  selectedPiece: ITableState;
+  turnCoeficient: number;
+  initialY: number;
+  setEnPassantSquare: (square: string | null) => void;
+  changeTurn: () => void;
+  initialX: number;
+  table: ITableState;
+  removePieceFromSquare: (square: string) => void;
+}
