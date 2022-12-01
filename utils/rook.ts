@@ -1,6 +1,6 @@
 import { FILE_LETTER } from "./constants";
 import { willBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState } from "./interfaces";
+import { Color, FileNumber, IMove, ITableState } from "./interfaces";
 
 interface IGetRookMoves {
   table: ITableState;
@@ -57,9 +57,9 @@ export const getRookAttackingMovesWithoutCheckingForCheck = ({ table, file, row,
   }
   return possibleMoves;
 };
-export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetRookMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetRookMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -78,7 +78,7 @@ export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topSquare });
       }
       break;
     } else if (table[topSquare]?.color === color) break;
@@ -98,7 +98,7 @@ export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomSquare });
       }
       break;
     } else if (table[bottomSquare]?.color === color) break;
@@ -118,7 +118,7 @@ export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(rightSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquare });
       }
       break;
     } else if (table[rightSquare]?.color === color) break;
@@ -138,7 +138,7 @@ export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(leftSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquare });
       }
       break;
     } else if (table[leftSquare]?.color === color) break;
@@ -146,9 +146,9 @@ export const getRookAttackingMoves = ({ table, file, row, color, enPassantSquare
   return possibleMoves;
 };
 
-export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetRookMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetRookMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -167,7 +167,7 @@ export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetR
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topSquare });
       }
     } else break;
   }
@@ -186,7 +186,7 @@ export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetR
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomSquare });
       }
     } else break;
   }
@@ -205,7 +205,7 @@ export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetR
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(rightSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquare });
       }
     } else break;
   }
@@ -224,7 +224,7 @@ export const getRookMoves = ({ table, file, row, color, enPassantSquare }: IGetR
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(leftSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquare });
       }
     } else break;
   }

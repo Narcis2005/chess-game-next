@@ -24,6 +24,7 @@ export enum FileNumber {
 export interface ICreateSquare {
   type: Piece | null;
   color: Color | null;
+  hasMoved?: boolean;
 }
 export interface ISquare {
   piece: string | null;
@@ -42,19 +43,25 @@ export interface ITableState {
 export interface IOnClickSquare {
   square: ITableState;
   table: ITableState;
-  highlightSquares: (squares: string[] | null) => void;
+  highlightSquares: (squares: IMove[] | null) => void;
   unHilightAllSquares: () => void;
   setSelectedPiece: (square: ITableState) => void;
   movePieceToSquare: (square: string, piece?: ITableState) => void;
   turn: Color;
   selectedPiece: ITableState;
   changeTurn: () => void;
-  highlightAttackingSquares: (squares: string[] | null) => void;
+  highlightAttackingSquares: (squares: IMove[] | null) => void;
   highlightCastlingSquare: (square: string, king: boolean) => void;
   enPassantSquare: string | null;
   setEnPassantSquare: (square: string | null) => void;
-  highlightEnPassantSquare: (square: string[]) => void;
+  highlightEnPassantSquare: (square: IMove[]) => void;
   removePieceFromSquare: (square: string) => void;
+  increaseHalfMoves: () => void;
+  increaseFullMoves: () => void;
+  resetHalfMoves: () => void;
+  halfMoves: number;
+  fullMoves: number;
+  setPromotingSquareFunction: (square: string | null) => void;
 }
 export interface IGetAllAttackingMoves {
   color: Color;
@@ -73,4 +80,13 @@ export interface IHandleMovePieceToSquareWhenHighlighted {
   initialX: number;
   table: ITableState;
   removePieceFromSquare: (square: string) => void;
+  increaseHalfMoves: () => void;
+  increaseFullMoves: () => void;
+  resetHalfMoves: () => void;
+  turn: Color;
+  setPromotingSquareFunction: (square: string | null) => void;
+}
+export interface IMove {
+  initialSquare: string;
+  targetSquare: string;
 }

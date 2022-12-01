@@ -1,6 +1,6 @@
 import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
 import { FILE_LETTER } from "./constants";
-import { createFENFromTable, handleMovePieceToSquareWhenHighlighted } from "./generalFunctions";
+import { createFENFromTable, handleMovePieceToSquareWhenHighlighted, makeTableFromFEN } from "./generalFunctions";
 import { Color, FileNumber, IOnClickSquare, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
@@ -24,6 +24,12 @@ const onClickSquare = ({
   changeTurn,
   highlightEnPassantSquare,
   removePieceFromSquare,
+  increaseFullMoves,
+  increaseHalfMoves,
+  resetHalfMoves,
+  halfMoves,
+  fullMoves,
+  setPromotingSquareFunction,
 }: IOnClickSquare) => {
   unHilightAllSquares();
   const squareName = Object.keys(square)[0];
@@ -44,13 +50,27 @@ const onClickSquare = ({
     turnCoeficient,
     initialX,
     initialY,
+    increaseFullMoves,
+    increaseHalfMoves,
+    resetHalfMoves,
+    turn,
+    setPromotingSquareFunction,
   });
   if (hasPieceMoved) return;
-  console.log(createFENFromTable(table, turn, enPassantSquare));
+  console.log(createFENFromTable(table, turn, enPassantSquare, halfMoves, fullMoves));
+  console.log(
+    createFENFromTable(
+      makeTableFromFEN(createFENFromTable(table, turn, enPassantSquare, halfMoves, fullMoves)),
+      turn,
+      enPassantSquare,
+      halfMoves,
+      fullMoves,
+    ),
+  );
   setSelectedPiece(square);
 
   if (square[squareName].type === Piece.pawn && square[squareName].color === turn) {
-    const squares = getPawnMoves({
+    const moves = getPawnMoves({
       table,
       file,
       row,
@@ -68,7 +88,7 @@ const onClickSquare = ({
       color: square[squareName].color,
       enPassantSquare,
     });
-    highlightSquares(squares);
+    highlightSquares(moves);
     if (attackingPawnsInfo && attackingPawnsInfo.attackingPossibleMoves)
       highlightAttackingSquares(attackingPawnsInfo.attackingPossibleMoves);
     if (attackingPawnsInfo && attackingPawnsInfo.enPassantMoves) highlightEnPassantSquare(attackingPawnsInfo.enPassantMoves);

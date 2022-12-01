@@ -1,6 +1,6 @@
 import { getBishopAttackingMoves, getBishopAttackingMovesWithoutCheckingForCheck, getBishopMoves } from "./Bishop";
-import { createSquare, FILE_LETTER } from "./constants";
-import { Color, IGetAllAttackingMoves, IHandleMovePieceToSquareWhenHighlighted, ITableState, Piece } from "./interfaces";
+import { BLACK_PAWNS_PROMOTING_POSITIONS, createSquare, FILE_LETTER, WHITE_PAWNS_PROMOTING_POSITIONS } from "./constants";
+import { Color, IGetAllAttackingMoves, IHandleMovePieceToSquareWhenHighlighted, IMove, ITableState, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingAttackingMovesWithoutCheckingForCheck, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightAttackingMovesWithoutCheckingForCheck, getKnightMoves } from "./Knight";
 import { getPawnAttackingMoves, getPawnAttackingMovesWithoutCheckingForCheck, getPawnMoves } from "./Pawn";
@@ -128,7 +128,7 @@ export const willBeCheck = ({
 
   return response;
 };
-export const getAllLegalMoves = ({ color, table, enPassantSquare }: IGetAllAttackingMoves): string[] | null => {
+export const getAllLegalMoves = ({ color, table, enPassantSquare }: IGetAllAttackingMoves): IMove[] | null => {
   const allLegalMoves = [];
   const turnCoeficient = color === Color.black ? 1 : -1;
   for (const square in table) {
@@ -197,7 +197,13 @@ export const getAllLegalMoves = ({ color, table, enPassantSquare }: IGetAllAttac
   return allLegalMoves;
 };
 
-export const createFENFromTable = (table: ITableState, turn: Color, enPassantSquare: string | null) => {
+export const createFENFromTable = (
+  table: ITableState,
+  turn: Color,
+  enPassantSquare: string | null,
+  halfMoves: number,
+  fullMoves: number,
+) => {
   let FEN = "";
   for (let i = 8; i >= 1; i--) {
     let emptySquares = 0;
@@ -275,57 +281,82 @@ export const createFENFromTable = (table: ITableState, turn: Color, enPassantSqu
   } else {
     FEN += " b ";
   }
-  const whiteKingSquare = getKingSquare({ table: table, color: Color.white });
-  const blackKingSquare = getKingSquare({ table: table, color: Color.black });
-  let whiteKingFile = "";
-  let whiteKingRow = -1;
-  let blackKingFile = "";
-  let blackKingRow = -1;
-  if (whiteKingSquare) {
-    whiteKingFile = whiteKingSquare.split("")[0];
-    whiteKingRow = +whiteKingSquare.split("")[1];
-  }
-  if (blackKingSquare) {
-    blackKingFile = blackKingSquare.split("")[0];
-    blackKingRow = +blackKingSquare.split("")[1];
-  }
-  const whiteKingInfo = getKingMoves({
-    table,
-    color: Color.white,
-    file: whiteKingFile,
-    row: whiteKingRow,
-    enPassantSquare,
-  });
-  const blackKingInfo = getKingMoves({
-    table,
-    color: Color.black,
-    file: blackKingFile,
-    row: blackKingRow,
-    enPassantSquare,
-  });
+  const whiteKingSquare = table["e1"];
+  const blackKingSquare = table["e8"];
+
+  const whiteQueenSideRook = table["a1"];
+  const whiteKingSideRook = table["h1"];
+  const blackQueenSideRook = table["a8"];
+  const blackKingSideRook = table["h8"];
+
+  const isWhiteQueenSideCastlingAvalaible =
+    whiteKingSquare &&
+    whiteKingSquare.type === Piece.king &&
+    whiteKingSquare.color === Color.white &&
+    whiteKingSquare.hasMoved === false &&
+    whiteQueenSideRook &&
+    whiteQueenSideRook.color === Color.white &&
+    whiteQueenSideRook.type === Piece.rook &&
+    whiteQueenSideRook.hasMoved === false;
+
+  const isWhiteKingSideCastlingAvalaible =
+    whiteKingSquare &&
+    whiteKingSquare.type === Piece.king &&
+    whiteKingSquare.color === Color.white &&
+    whiteKingSquare.hasMoved === false &&
+    whiteKingSideRook &&
+    whiteKingSideRook.color === Color.white &&
+    whiteKingSideRook.type === Piece.rook &&
+    whiteKingSideRook.hasMoved === false;
+
+  const isBlackQueenSideCastlingAvalaible =
+    blackKingSquare &&
+    blackKingSquare.type === Piece.king &&
+    blackKingSquare.color === Color.black &&
+    blackKingSquare.hasMoved === false &&
+    blackQueenSideRook &&
+    blackQueenSideRook.color === Color.black &&
+    blackQueenSideRook.type === Piece.rook &&
+    blackQueenSideRook.hasMoved === false;
+
+  const isBlackKingSideCastlingAvalaible =
+    blackKingSquare &&
+    blackKingSquare.type === Piece.king &&
+    blackKingSquare.color === Color.black &&
+    blackKingSquare.hasMoved === false &&
+    blackKingSideRook &&
+    blackKingSideRook.color === Color.black &&
+    blackKingSideRook.type === Piece.rook &&
+    blackKingSideRook.hasMoved === false;
+
   let isAnyCastlingAvalaible = false;
-  if (whiteKingInfo?.queenSideCastling) {
-    FEN += "Q";
-    isAnyCastlingAvalaible = true;
-  }
-  if (whiteKingInfo?.kingSideCastling) {
+  if (isWhiteKingSideCastlingAvalaible) {
     FEN += "K";
     isAnyCastlingAvalaible = true;
   }
-  if (blackKingInfo?.queenSideCastling) {
-    FEN += "q";
+  if (isWhiteQueenSideCastlingAvalaible) {
+    FEN += "Q";
     isAnyCastlingAvalaible = true;
   }
-  if (blackKingInfo?.kingSideCastling) {
+  if (isBlackKingSideCastlingAvalaible) {
     FEN += "k";
     isAnyCastlingAvalaible = true;
   }
+  if (isBlackQueenSideCastlingAvalaible) {
+    FEN += "q";
+    isAnyCastlingAvalaible = true;
+  }
+
   if (isAnyCastlingAvalaible === false) {
     FEN += "-";
   }
   if (enPassantSquare) {
     FEN += " " + enPassantSquare;
   } else FEN += " -";
+  FEN += " ";
+  FEN += halfMoves;
+  FEN += " ";
+  FEN += fullMoves;
   return FEN;
 };
 
@@ -341,7 +372,16 @@ export const handleMovePieceToSquareWhenHighlighted = ({
   initialX,
   table,
   removePieceFromSquare,
+  increaseFullMoves,
+  increaseHalfMoves,
+  resetHalfMoves,
+  turn,
+  setPromotingSquareFunction,
 }: IHandleMovePieceToSquareWhenHighlighted) => {
+  if (!selectedPiece[Object.keys(selectedPiece)[0]]) return false;
+  if (square[squareName].isAttacked || selectedPiece[Object.keys(selectedPiece)[0]].type === Piece.pawn) {
+    resetHalfMoves();
+  }
   if (
     (square[squareName].isHighlighted && square[squareName].piece === null) || //if piece can go to square (because is highlighted)
     square[squareName].isAttacked //if piece can capture piece
@@ -353,9 +393,18 @@ export const handleMovePieceToSquareWhenHighlighted = ({
       setEnPassantSquare(squareName);
     } else setEnPassantSquare(null);
     movePieceToSquare(squareName);
+    if (
+      selectedPiece[Object.keys(selectedPiece)[0]].type === Piece.pawn &&
+      (WHITE_PAWNS_PROMOTING_POSITIONS.includes(squareName) || BLACK_PAWNS_PROMOTING_POSITIONS.includes(squareName))
+    ) {
+      setPromotingSquareFunction(squareName);
+    }
+    increaseHalfMoves();
+    if (turn === Color.black) increaseFullMoves();
     changeTurn();
     return true;
   }
+
   if (square[squareName].isKingCastlingSquare) {
     movePieceToSquare(squareName); // move the king to the castling square
     movePieceToSquare(FILE_LETTER[initialX - 2] + initialY, {
@@ -380,4 +429,105 @@ export const handleMovePieceToSquareWhenHighlighted = ({
     return true;
   }
   return false;
+};
+
+export const makeTableFromFEN = (FEN: string): ITableState => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [tablePositions, turn, castlingRights, enPassant, halfMoves, fullMoves] = FEN.split(" ");
+  const table: ITableState = {};
+  // const [tablePositions] = FEN.split(" ");
+  const rows = tablePositions.split("/");
+  for (let i = 8; i >= 1; i--) {
+    let rowIndex = 0;
+    for (let j = 1; j <= 8; j++) {
+      const fileLetter = FILE_LETTER[j - 1];
+      const square = `${fileLetter}${i}`;
+      const letter = rows[9 - i - 1][rowIndex];
+      if (letter === "p") {
+        table[square] = createSquare({
+          type: Piece.pawn,
+          color: Color.black,
+        });
+      } else if (letter === "P") {
+        table[square] = createSquare({
+          type: Piece.pawn,
+          color: Color.white,
+        });
+      } else if (letter === "b") {
+        table[square] = createSquare({
+          type: Piece.bishop,
+          color: Color.black,
+        });
+      } else if (letter === "B") {
+        table[square] = createSquare({
+          type: Piece.bishop,
+          color: Color.white,
+        });
+      } else if (letter === "r") {
+        table[square] = createSquare({
+          type: Piece.rook,
+          color: Color.black,
+        });
+      } else if (letter === "R") {
+        table[square] = createSquare({
+          type: Piece.rook,
+          color: Color.white,
+          hasMoved: true,
+        });
+      } else if (letter === "k") {
+        table[square] = createSquare({
+          type: Piece.king,
+          color: Color.black,
+        });
+      } else if (letter === "K") {
+        table[square] = createSquare({
+          type: Piece.king,
+          color: Color.white,
+        });
+      } else if (letter === "n") {
+        table[square] = createSquare({
+          type: Piece.knight,
+          color: Color.black,
+        });
+      } else if (letter === "N") {
+        table[square] = createSquare({
+          type: Piece.knight,
+          color: Color.white,
+        });
+      } else if (letter === "q") {
+        table[square] = createSquare({
+          type: Piece.queen,
+          color: Color.black,
+        });
+      } else if (letter === "Q") {
+        table[square] = createSquare({
+          type: Piece.queen,
+          color: Color.white,
+        });
+      } else if (!isNaN(Number(letter))) {
+        for (let k = 0; k < Number(letter); k++) {
+          const fileLetter = FILE_LETTER[j + k - 1];
+          const square = `${fileLetter}${i}`;
+          table[square] = createSquare({
+            type: null,
+            color: null,
+          });
+        }
+        j += Number(letter) - 1;
+      }
+      rowIndex++;
+    }
+  }
+  for (let i = 0; i < castlingRights.length; i++) {
+    if (castlingRights[i] === "k") {
+      table["h8"] = { ...table["h8"], hasMoved: false };
+    } else if (castlingRights[i] === "K") {
+      table["h1"] = { ...table["h1"], hasMoved: false };
+    } else if (castlingRights[i] === "q") {
+      table["a8"] = { ...table["a8"], hasMoved: false };
+    } else if (castlingRights[i] === "Q") {
+      table["a1"] = { ...table["a1"], hasMoved: false };
+    }
+  }
+  return table;
 };

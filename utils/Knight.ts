@@ -1,6 +1,6 @@
 import { FILE_LETTER } from "./constants";
 import { willBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState } from "./interfaces";
+import { Color, FileNumber, IMove, ITableState } from "./interfaces";
 interface IGetKnightMoves {
   table: ITableState;
   file: string;
@@ -36,9 +36,9 @@ export const getKnightAttackingMovesWithoutCheckingForCheck = ({ table, file, ro
   }
   return possibleMoves;
 };
-export const getKnightAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetKnightMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getKnightAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetKnightMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   for (let i = -1; i < 2; i += 2) {
     for (let j = -1; j < 2; j += 2) {
@@ -60,7 +60,7 @@ export const getKnightAttackingMoves = ({ table, file, row, color, enPassantSqua
             enPassantSquare,
           })
         ) {
-          possibleMoves.push(FILE_LETTER[verticalMove.x - 1] + verticalMove.y);
+          possibleMoves.push({ initialSquare: file + row, targetSquare: FILE_LETTER[verticalMove.x - 1] + verticalMove.y });
         }
       }
 
@@ -79,7 +79,7 @@ export const getKnightAttackingMoves = ({ table, file, row, color, enPassantSqua
             enPassantSquare,
           })
         ) {
-          possibleMoves.push(FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y);
+          possibleMoves.push({ initialSquare: file + row, targetSquare: FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y });
         }
       }
     }
@@ -87,10 +87,10 @@ export const getKnightAttackingMoves = ({ table, file, row, color, enPassantSqua
   return possibleMoves;
 };
 
-export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGetKnightMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
+export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGetKnightMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
 
-  if (color === undefined || color === null) return possibleMoves;
+  if (color === undefined || color === null) return null;
 
   for (let i = -1; i < 2; i += 2) {
     for (let j = -1; j < 2; j += 2) {
@@ -107,7 +107,7 @@ export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGe
             enPassantSquare,
           })
         ) {
-          possibleMoves.push(FILE_LETTER[verticalMove.x - 1] + verticalMove.y);
+          possibleMoves.push({ initialSquare: file + row, targetSquare: FILE_LETTER[verticalMove.x - 1] + verticalMove.y });
         }
       }
 
@@ -122,7 +122,7 @@ export const getKnightMoves = ({ table, file, row, color, enPassantSquare }: IGe
             enPassantSquare,
           })
         ) {
-          possibleMoves.push(FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y);
+          possibleMoves.push({ initialSquare: file + row, targetSquare: FILE_LETTER[horizontalMove.x - 1] + horizontalMove.y });
         }
       }
     }

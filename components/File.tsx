@@ -1,3 +1,5 @@
+import React from "react";
+
 const File = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
@@ -6,4 +8,4 @@ const File = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default File;
+export default React.memo(File);

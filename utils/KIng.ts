@@ -1,6 +1,6 @@
 import { FILE_LETTER } from "./constants";
 import { willBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState, Piece } from "./interfaces";
+import { Color, FileNumber, IMove, ITableState, Piece } from "./interfaces";
 
 interface IGetKingMoves {
   table: ITableState;
@@ -49,9 +49,9 @@ export const getKingAttackingMovesWithoutCheckingForCheck = ({ table, file, row,
   }
   return possibleMoves;
 };
-export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetKingMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetKingMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -67,7 +67,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(squareAboveKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: squareAboveKing });
     }
   }
   const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
@@ -82,7 +82,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(rightSquareAboveKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquareAboveKing });
     }
   }
   const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
@@ -97,7 +97,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         file,
       })
     ) {
-      possibleMoves.push(leftSquareAboveKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquareAboveKing });
     }
   }
   const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
@@ -112,7 +112,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(leftSquareNextToKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquareNextToKing });
     }
   }
   const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
@@ -127,7 +127,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(rightSquareNextToKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquareNextToKing });
     }
   }
   const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
@@ -142,7 +142,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(leftSquareBelowKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquareBelowKing });
     }
   }
   const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
@@ -157,7 +157,7 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(squareBelowKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: squareBelowKing });
     }
   }
   const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
@@ -172,18 +172,18 @@ export const getKingAttackingMoves = ({ table, file, row, color, enPassantSquare
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(rightSquareBelowKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquareBelowKing });
     }
   }
   return possibleMoves;
 };
 interface IGetKingMovesReturn {
-  moves: string[];
+  moves: IMove[];
   kingSideCastling: boolean;
   queenSideCastling: boolean;
 }
 export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetKingMoves): null | IGetKingMovesReturn => {
-  const possibleMoves: string[] | null = [];
+  const possibleMoves: IMove[] | null = [];
   if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
@@ -200,7 +200,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(squareAboveKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: squareAboveKing });
     }
   }
   const rightSquareAboveKing = FILE_LETTER[initialX] + (initialY + 1);
@@ -215,7 +215,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(rightSquareAboveKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquareAboveKing });
     }
   }
   const leftSquareAboveKing = FILE_LETTER[initialX - 2] + (initialY + 1);
@@ -230,7 +230,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(leftSquareAboveKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquareAboveKing });
     }
   }
   const leftSquareNextToKing = FILE_LETTER[initialX - 2] + initialY;
@@ -245,7 +245,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(leftSquareNextToKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquareNextToKing });
     }
   }
   const rightSquareNextToKing = FILE_LETTER[initialX] + initialY;
@@ -260,7 +260,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(rightSquareNextToKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquareNextToKing });
     }
   }
   const leftSquareBelowKing = FILE_LETTER[initialX - 2] + (initialY - 1);
@@ -275,7 +275,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(leftSquareBelowKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: leftSquareBelowKing });
     }
   }
   const squareBelowKing = FILE_LETTER[initialX - 1] + (initialY - 1);
@@ -290,7 +290,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         enPassantSquare,
       })
     ) {
-      possibleMoves.push(squareBelowKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: squareBelowKing });
     }
   }
   const rightSquareBelowKing = FILE_LETTER[initialX] + (initialY - 1);
@@ -305,7 +305,7 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
         file,
       })
     ) {
-      possibleMoves.push(rightSquareBelowKing);
+      possibleMoves.push({ initialSquare: file + row, targetSquare: rightSquareBelowKing });
     }
   }
   let kingSideCastling = false;

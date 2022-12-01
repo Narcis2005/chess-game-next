@@ -1,6 +1,6 @@
 import { FILE_LETTER } from "./constants";
 import { willBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState } from "./interfaces";
+import { Color, FileNumber, IMove, ITableState } from "./interfaces";
 
 interface IGetQueenMoves {
   table: ITableState;
@@ -104,9 +104,9 @@ export const getQueenAttackingMovesWithoutCheckingForCheck = ({ table, file, row
   }
   return possibleMoves;
 };
-export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetQueenMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetQueenMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -126,7 +126,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(leftRowSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: leftRowSquare });
       }
       break;
     } else if (table[leftRowSquare]?.color === color) break;
@@ -147,7 +147,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(rightRowSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: rightRowSquare });
       }
       break;
     } else if (table[rightRowSquare]?.color === color) break;
@@ -168,7 +168,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topFileSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topFileSquare });
       }
       break;
     } else if (table[topFileSquare]?.color === color) break;
@@ -189,7 +189,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomFileSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomFileSquare });
       }
       break;
     } else if (table[bottomFileSquare]?.color === color) break;
@@ -210,7 +210,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topRightDiagonalSquare });
       }
       break;
     } else if (table[topRightDiagonalSquare]?.color === color) break;
@@ -235,7 +235,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomRightDiagonalSquare });
       }
       break;
     } else if (table[bottomRightDiagonalSquare]?.color === color) break;
@@ -256,7 +256,7 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topLeftDiagonalSquare });
       }
       break;
     } else if (table[topLeftDiagonalSquare]?.color === color) break;
@@ -281,16 +281,16 @@ export const getQueenAttackingMoves = ({ table, file, row, color, enPassantSquar
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomLeftDiagonalSquare });
       }
       break;
     } else if (table[bottomLeftDiagonalSquare]?.color === color) break;
   }
   return possibleMoves;
 };
-export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGetQueenMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGetQueenMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -310,7 +310,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(leftRowSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: leftRowSquare });
       }
     } else break;
   }
@@ -330,7 +330,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(rightRowSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: rightRowSquare });
       }
     } else break;
   }
@@ -350,7 +350,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topFileSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topFileSquare });
       }
     } else break;
   }
@@ -370,7 +370,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomFileSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomFileSquare });
       }
     } else break;
   }
@@ -390,7 +390,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topRightDiagonalSquare });
       }
     } else break;
   }
@@ -410,7 +410,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomRightDiagonalSquare });
       }
     } else break;
   }
@@ -430,7 +430,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(topLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: topLeftDiagonalSquare });
       }
     } else break;
   }
@@ -450,7 +450,7 @@ export const getQueenMoves = ({ table, file, row, color, enPassantSquare }: IGet
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(bottomLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: bottomLeftDiagonalSquare });
       }
     } else break;
   }

@@ -1,6 +1,6 @@
 import { FILE_LETTER } from "./constants";
 import { willBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState } from "./interfaces";
+import { Color, FileNumber, IMove, ITableState } from "./interfaces";
 
 interface IGetBishopMoves {
   table: ITableState;
@@ -73,9 +73,9 @@ export const getBishopAttackingMovesWithoutCheckingForCheck = ({ table, file, ro
   }
   return possibleMoves;
 };
-export const getBishopAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetBishopMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getBishopAttackingMoves = ({ table, file, row, color, enPassantSquare }: IGetBishopMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -98,7 +98,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color, enPassantSqua
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(upperRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: upperRightDiagonalSquare });
       }
       break;
     } else if (table[upperRightDiagonalSquare]?.color === color) break;
@@ -122,7 +122,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color, enPassantSqua
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(lowerRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: lowerRightDiagonalSquare });
       }
       break;
     } else if (table[lowerRightDiagonalSquare]?.color === color) break;
@@ -146,7 +146,7 @@ export const getBishopAttackingMoves = ({ table, file, row, color, enPassantSqua
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(lowerLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: lowerLeftDiagonalSquare });
       }
       break;
     } else if (table[lowerLeftDiagonalSquare]?.color) break;
@@ -170,16 +170,16 @@ export const getBishopAttackingMoves = ({ table, file, row, color, enPassantSqua
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(upperLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: upperLeftDiagonalSquare });
       }
       break;
     } else if (table[upperLeftDiagonalSquare]?.color === color) break;
   }
   return possibleMoves;
 };
-export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGetBishopMoves): string[] | null => {
-  const possibleMoves: string[] | null = [];
-  if (color === undefined || color === null) return possibleMoves;
+export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGetBishopMoves): IMove[] | null => {
+  const possibleMoves: IMove[] | null = [];
+  if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
   const initialY = row;
@@ -198,7 +198,7 @@ export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGe
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(upperRightDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: upperRightDiagonalSquare });
       }
     } else break;
   }
@@ -217,7 +217,7 @@ export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGe
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(lowerLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: lowerLeftDiagonalSquare });
       }
     } else break;
   }
@@ -236,7 +236,7 @@ export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGe
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(lowerLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: lowerLeftDiagonalSquare });
       }
     } else break;
   }
@@ -255,7 +255,7 @@ export const getBishopMoves = ({ table, file, row, color, enPassantSquare }: IGe
           enPassantSquare,
         })
       ) {
-        possibleMoves.push(upperLeftDiagonalSquare);
+        possibleMoves.push({ initialSquare: file + row, targetSquare: upperLeftDiagonalSquare });
       }
     } else break;
   }

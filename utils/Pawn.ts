@@ -1,6 +1,6 @@
 import { createSquare, FILE_LETTER, PAWN_STARTING_POSITIONS } from "./constants";
 import { willBeCheck } from "./generalFunctions";
-import { Color, FileNumber, ITableState } from "./interfaces";
+import { Color, FileNumber, IMove, ITableState } from "./interfaces";
 
 interface IGetPawnMoves {
   table: ITableState;
@@ -11,11 +11,18 @@ interface IGetPawnMoves {
   color: Color | null;
   enPassantSquare: string | null;
 }
+
 interface IGetAttackingMovesReturn {
-  attackingPossibleMoves: string[];
-  enPassantMoves: string[];
+  attackingPossibleMoves: IMove[];
+  enPassantMoves: IMove[];
 }
-export const getPawnAttackingMovesWithoutCheckingForCheck = ({ table, file, row, turnCoeficient, color }: IGetPawnMoves): string[] | null => {
+export const getPawnAttackingMovesWithoutCheckingForCheck = ({
+  table,
+  file,
+  row,
+  turnCoeficient,
+  color,
+}: IGetPawnMoves): string[] | null => {
   const attackingPossibleMoves: string[] | null = [];
   if (color === undefined || color === null) return attackingPossibleMoves;
 
@@ -32,8 +39,15 @@ export const getPawnAttackingMovesWithoutCheckingForCheck = ({ table, file, row,
   //add en passant here
   return attackingPossibleMoves;
 };
-export const getPawnAttackingMoves = ({ table, file, row, turnCoeficient, color, enPassantSquare }: IGetPawnMoves): IGetAttackingMovesReturn | null => {
-  const attackingPossibleMoves: string[] | null = [];
+export const getPawnAttackingMoves = ({
+  table,
+  file,
+  row,
+  turnCoeficient,
+  color,
+  enPassantSquare,
+}: IGetPawnMoves): IGetAttackingMovesReturn | null => {
+  const attackingPossibleMoves: IMove[] | null = [];
   if (color === undefined || color === null) return null;
 
   const initialX = FileNumber[file as keyof typeof FileNumber];
@@ -57,7 +71,7 @@ export const getPawnAttackingMoves = ({ table, file, row, turnCoeficient, color,
         enPassantSquare,
       })
     ) {
-      attackingPossibleMoves.push(cornerRightSquare);
+      attackingPossibleMoves.push({ initialSquare: file + row, targetSquare: cornerRightSquare });
     }
   }
   const cornerLeftSquare = FILE_LETTER[initialX - 2] + (initialY + -1 * turnCoeficient);
@@ -72,10 +86,10 @@ export const getPawnAttackingMoves = ({ table, file, row, turnCoeficient, color,
         enPassantSquare,
       })
     ) {
-      attackingPossibleMoves.push(cornerLeftSquare);
+      attackingPossibleMoves.push({ initialSquare: file + row, targetSquare: cornerLeftSquare });
     }
   }
-  const enPassantMoves: string[] | null = [];
+  const enPassantMoves: IMove[] | null = [];
   if (
     enPassantSquare &&
     table[cornerLeftSquare] &&
@@ -99,7 +113,7 @@ export const getPawnAttackingMoves = ({ table, file, row, turnCoeficient, color,
         enPassantSquare,
       })
     ) {
-      enPassantMoves.push(cornerLeftSquare);
+      enPassantMoves.push({ initialSquare: file + row, targetSquare: cornerLeftSquare });
     }
   }
   if (
@@ -125,13 +139,13 @@ export const getPawnAttackingMoves = ({ table, file, row, turnCoeficient, color,
         enPassantSquare,
       })
     ) {
-      enPassantMoves.push(cornerRightSquare);
+      enPassantMoves.push({ initialSquare: file + row, targetSquare: cornerRightSquare });
     }
   }
 
   return { attackingPossibleMoves, enPassantMoves };
 };
-export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, color, enPassantSquare }: IGetPawnMoves): string[] | null => {
+export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, color, enPassantSquare }: IGetPawnMoves): IMove[] | null => {
   if (color === undefined || color === null) return null;
   const firstFrontSquare = file + (row + -1 * turnCoeficient);
   const secondFrontSquare = file + (row + -2 * turnCoeficient);
@@ -149,7 +163,7 @@ export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, col
           enPassantSquare,
         })
       ) {
-        return [firstFrontSquare];
+        return [{ initialSquare: file + row, targetSquare: firstFrontSquare }];
       }
     }
     return null;
@@ -177,8 +191,11 @@ export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, col
             enPassantSquare,
           })
         ) {
-          return [firstFrontSquare, secondFrontSquare]; // both front squares can block the check (probably impossible)
-        } else return [secondFrontSquare]; //second square can block check
+          return [
+            { initialSquare: file + row, targetSquare: firstFrontSquare },
+            { initialSquare: file + row, targetSquare: secondFrontSquare },
+          ]; // both front squares can block the check (probably impossible)
+        } else return [{ initialSquare: file + row, targetSquare: secondFrontSquare }]; //second square can block check
       }
     } else if (table[firstFrontSquare]?.type === null) {
       if (
@@ -191,7 +208,7 @@ export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, col
           enPassantSquare,
         })
       ) {
-        return [firstFrontSquare]; // front square can block check and second square is not blocked
+        return [{ initialSquare: file + row, targetSquare: firstFrontSquare }]; // front square can block check and second square is not blocked
       }
     }
   } else if (table[firstFrontSquare].type === null) {
@@ -205,7 +222,7 @@ export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, col
         enPassantSquare,
       })
     )
-      return [firstFrontSquare]; // front square can block check and second square is  blocked
+      return [{ initialSquare: file + row, targetSquare: firstFrontSquare }]; // front square can block check and second square is  blocked
   }
   return null;
 };

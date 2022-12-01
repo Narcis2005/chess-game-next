@@ -1,3 +1,4 @@
+import React from "react";
 import { IOnClickSquare } from "../utils/interfaces";
 import onClickSquare from "../utils/onClickSquare";
 interface ISquareComponent {
@@ -23,11 +24,9 @@ const Square = ({
   return (
     <>
       <div
-        className={`square ${(YCoordonate + XCoordonate) % 2 === 0 ? "white" : "black"} ${
-          isHighlited ? "highlight" : ""
-        } ${isAttacked ? "attacked" : ""} ${isCastlingSquare ? "highlight" : ""} ${
-          isEnPassantSquare ? "attacked" : ""
-        }`}
+        className={`square ${(YCoordonate + XCoordonate) % 2 === 0 ? "white" : "black"} ${isHighlited ? "highlight" : ""} ${
+          isAttacked ? "attacked" : ""
+        } ${isCastlingSquare ? "highlight" : ""} ${isEnPassantSquare ? "attacked" : ""}`}
         onClick={() =>
           onClickSquare({
             ...onClickSquareProps,
@@ -40,4 +39,4 @@ const Square = ({
   );
 };
 
-export default Square;
+export default React.memo(Square);
