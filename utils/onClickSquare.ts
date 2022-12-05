@@ -1,6 +1,6 @@
 import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
 import { FILE_LETTER } from "./constants";
-import { createFENFromTable, handleMovePieceToSquareWhenHighlighted, makeTableFromFEN } from "./generalFunctions";
+import { createFENFromTable, handleMovePieceToSquareWhenHighlighted } from "./generalFunctions";
 import { Color, FileNumber, IOnClickSquare, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
@@ -30,8 +30,10 @@ const onClickSquare = ({
   halfMoves,
   fullMoves,
   setPromotingSquareFunction,
+  isNewestPosition,
 }: IOnClickSquare) => {
   unHilightAllSquares();
+  if (!isNewestPosition) return;
   const squareName = Object.keys(square)[0];
   const file = squareName.split("")[0];
   const row = +squareName.split("")[1];
@@ -56,17 +58,11 @@ const onClickSquare = ({
     turn,
     setPromotingSquareFunction,
   });
-  if (hasPieceMoved) return;
+  if (hasPieceMoved) {
+    return;
+  }
   console.log(createFENFromTable(table, turn, enPassantSquare, halfMoves, fullMoves));
-  console.log(
-    createFENFromTable(
-      makeTableFromFEN(createFENFromTable(table, turn, enPassantSquare, halfMoves, fullMoves)),
-      turn,
-      enPassantSquare,
-      halfMoves,
-      fullMoves,
-    ),
-  );
+
   setSelectedPiece(square);
 
   if (square[squareName].type === Piece.pawn && square[squareName].color === turn) {
