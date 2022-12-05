@@ -1,127 +1,57 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextPage } from "next";
 import Image from "next/image";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import Square from "../../components/Square";
 import { createSquare, FILE_LETTER, InitialTableState } from "../../utils/constants";
 import { Color, IMove, ITableState, Piece } from "../../utils/interfaces";
 import File from "../../components/File";
 import HomeButtonImage from "../../assets/home-button-svgrepo-com.svg";
-import { checkIfCheck, createFENFromTable, getAllLegalMoves, makeTableFromFEN } from "../../utils/generalFunctions";
 import Link from "next/link";
-type TGameState = "playing" | "checkmate" | "draw";
+import { useSetCheckAndFENHistory, useSetGameState, useSetPositionFromHistory } from "./hooks";
 type TEnPassant = string | null;
 // const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-const Singleplayer: NextPage = () => {
-  const [tableState, setTableState] = useState<ITableState>(InitialTableState);
-  const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
-  const [turn, setTurn] = useState<Color>(Color.white);
-  const isCheck = useRef(false);
-  const [gameState, setGameState] = useState<TGameState>("playing");
-  const fullMoves = useRef(1);
-  const halfMoves = useRef(0);
-  const FENHistory = useRef<string[]>(["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]);
-  const [FENHistoryIndex, setFENHistoryIndex] = useState(0);
-  const enPassantSquare = useRef<TEnPassant>(null);
-  const [promotingSquare, setPromotingSquare] = useState<string | null>("");
+const containerFunctionHighlightSquares = (table: ITableState, setTableState: Dispatch<SetStateAction<ITableState>>) => {
   const highlightSquares = (squares: IMove[] | null) => {
     if (squares === null) return;
     const highlitedSquares: ITableState = {};
     for (const i of squares) {
-      highlitedSquares[i.targetSquare] = { ...tableState[i.targetSquare], isHighlighted: true };
+      highlitedSquares[i.targetSquare] = { ...table[i.targetSquare], isHighlighted: true };
     }
-    setTableState((oldTable) => {
-      return { ...oldTable, ...highlitedSquares };
+    setTableState((oldState) => {
+      return { ...oldState, ...highlitedSquares };
     });
   };
-  useEffect(() => {
-    if (gameState === "checkmate" && turn === Color.white) {
-      alert("black won!");
-    } else if (gameState === "checkmate" && turn === Color.black) {
-      alert("white won");
-    } else if (gameState === "draw") {
-      alert("draw");
-    }
-  }, [gameState, turn]);
+  return highlightSquares;
+};
+const Singleplayer: NextPage = () => {
+  const [tableState, setTableState] = useState<ITableState>(InitialTableState);
+  const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
+  const [turn, setTurn] = useState<Color>(Color.white);
+  const setGameState = useSetGameState(turn);
+  const enPassantSquare = useRef<TEnPassant>(null);
 
-  useEffect(() => {
-    const setCheck = () => {
-      if (checkIfCheck({ table: tableState, color: turn, enPassantSquare: enPassantSquare.current })) isCheck.current = true;
-      const allLegalMoves = getAllLegalMoves({
-        table: tableState,
-        color: turn,
-        enPassantSquare: enPassantSquare.current,
-      });
-      if (allLegalMoves && allLegalMoves?.length > 0) return;
-      if (isCheck.current) setGameState("checkmate");
-      else setGameState("draw");
-    };
-    setCheck();
-    const addFENToHistory = (FEN: string) => {
-      FENHistory.current.push(FEN);
-      setFENHistoryIndex((lastFENIndex) => lastFENIndex + 1);
-    };
-    const currentFEN = createFENFromTable(tableState, turn, enPassantSquare.current, halfMoves.current, fullMoves.current);
-    if (FENHistory.current[FENHistoryIndex].split(" ")[0] !== currentFEN.split(" ")[0]) addFENToHistory(currentFEN);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableState, turn]);
-  // useEffect(() => {
-  //   let table = { ...tableState };
-  //   const movePieceToSquareLocal = (square: string, pieceToMove: ITableState) => {
-  //     const emptySquare = createSquare({ color: null, type: null });
-  //     const newSquare = {
-  //       ...pieceToMove[Object.keys(pieceToMove)[0]],
-  //       hasMoved: true,
-  //     };
+  const highlightSquares = containerFunctionHighlightSquares(tableState, setTableState);
+  const {
+    FENHistory,
+    FENHistoryIndex,
+    fullMoves,
+    halfMoves,
+    increaseFullMoves,
+    increaseHalfMoves,
+    setHalfMoves,
+    setFullMoves,
+    setFENHistoryIndex,
+    resetHalfMoves,
+  } = useSetCheckAndFENHistory(tableState, turn, enPassantSquare.current, setGameState);
 
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  //     table[Object.keys(pieceToMove)[0]] = { ...emptySquare };
-  //     table[square] = { ...newSquare };
-  //   };
-  //   const makeAllMoves = async (depth: number, color: Color) => {
-  //     if (depth === 0) return 1;
-  //     const allLegalMoves = getAllLegalMoves({ color: color, table: table, enPassantSquare: enPassantSquare.current });
-  //     let numberOfCombinations = 0;
-  //     const oppositeColor = color === Color.black ? Color.white : Color.black;
-  //     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  //     if (allLegalMoves?.length)
-  //       for (let i = 0; i < allLegalMoves?.length; i++) {
-  //         const piece = table[allLegalMoves[i].initialSquare];
-  //         const tableBeforeMove = { ...table };
-  //         movePieceToSquareLocal(allLegalMoves[i].targetSquare, {
-  //           [allLegalMoves[i].initialSquare]: piece,
-  //         });
-  //         // setTableState({ ...table });
-  //         numberOfCombinations += await makeAllMoves(depth - 1, oppositeColor);
-  //         table = { ...tableBeforeMove };
-  //         // setTableState({ ...table });
-  //       }
+  const [promotingSquare, setPromotingSquare] = useState<string | null>("");
 
-  //     return numberOfCombinations;
-  //   };
-  //   console.time("function");
-  //   makeAllMoves(4, Color.white)
-  //     .then((data) => {
-  //       // console.log(data);
-  //       console.timeEnd("function");
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
-  const initializePositionFromFEN = useCallback((FEN: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [tablePositions, turn, castlingRights, enPassant, halfMovesFromFEN, fullMovesFromFEN] = FEN.split(" ");
-    setTableState(makeTableFromFEN(FEN));
-    if (turn === "b") setTurn(Color.black);
-    else setTurn(Color.white);
-    if (enPassant === "-") setEnPassantSquare(null);
-    else setEnPassantSquare(enPassant);
-    halfMoves.current = +halfMovesFromFEN;
-    fullMoves.current = +fullMovesFromFEN;
+  const setEnPassantSquare = useCallback((square: string | null) => {
+    enPassantSquare.current = square;
   }, []);
-  useEffect(() => {
-    initializePositionFromFEN(FENHistory.current[FENHistoryIndex]);
-  }, [FENHistoryIndex, initializePositionFromFEN]);
+
+  useSetPositionFromHistory(setTableState, setEnPassantSquare, setTurn, setHalfMoves, setFullMoves, FENHistory, FENHistoryIndex);
   const highlightAttackingSquares = (squares: IMove[] | null) => {
     if (squares === null) return;
     const attackHighlitedSquares: ITableState = {};
@@ -181,9 +111,7 @@ const Singleplayer: NextPage = () => {
       return { ...oldTable, ...castlingSquares };
     });
   };
-  const setEnPassantSquare = (square: string | null) => {
-    enPassantSquare.current = square;
-  };
+
   const highlightEnPassantSquare = (squares: IMove[]) => {
     const castlingSquares: ITableState = {};
     for (const i of squares) {
@@ -200,15 +128,6 @@ const Singleplayer: NextPage = () => {
     setTableState((oldState) => {
       return { ...oldState, ...emptySquare };
     });
-  };
-  const increaseFullMoves = () => {
-    fullMoves.current++;
-  };
-  const increaseHalfMoves = () => {
-    halfMoves.current++;
-  };
-  const resetHalfMoves = () => {
-    halfMoves.current = 0;
   };
 
   const setPromotingSquareFunction = (square: string | null) => {
@@ -232,7 +151,7 @@ const Singleplayer: NextPage = () => {
   };
   const showNextPosition = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (FENHistoryIndex >= FENHistory.current.length - 1) return;
+    if (FENHistoryIndex >= FENHistory.length - 1) return;
     setFENHistoryIndex((prevFENHistoryIndex) => prevFENHistoryIndex + 1);
   };
   return (
@@ -281,11 +200,11 @@ const Singleplayer: NextPage = () => {
                         increaseFullMoves,
                         increaseHalfMoves,
                         resetHalfMoves,
-                        halfMoves: halfMoves.current,
-                        fullMoves: fullMoves.current,
+                        halfMoves: halfMoves,
+                        fullMoves: fullMoves,
                         setPromotingSquareFunction,
                         // addFENToHistory,
-                        isNewestPosition: FENHistory.current.length - 1 === FENHistoryIndex,
+                        isNewestPosition: FENHistory.length - 1 === FENHistoryIndex,
                       }}
                     >
                       {tableState[letter + (8 - squareIndex)].piece !== null ? (
@@ -299,7 +218,6 @@ const Singleplayer: NextPage = () => {
           })}
         </div>
         <div className="table-buttons">
-          <button onClick={() => initializePositionFromFEN("8/bQ3K1p/P5P1/1R2P2p/8/p5r1/2P1k3/B3R1q1 b - - 1 1")}>Change Position</button>
           <button onClick={showPreviousPosition}>Before</button>
           <button onClick={showNextPosition}>After</button>
         </div>
