@@ -64,7 +64,8 @@ export const useSetCheckAndFENHistory = (
     };
     const currentFEN = createFENFromTable(tableState, turn, enPassantSquare, halfMoves.current, fullMoves.current);
     if (FENHistory.current[FENHistoryIndex].split(" ")[0] !== currentFEN.split(" ")[0]) addFENToHistory(currentFEN);
-  }, [FENHistoryIndex, enPassantSquare, setGameState, tableState, turn]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enPassantSquare, setGameState, tableState, turn]);
 
   return {
     ischeck: isCheck.current,
@@ -124,7 +125,6 @@ export const useCheckAllMoves = (tableState: ITableState, enPassantSquare: strin
       const allLegalMoves = getAllLegalMoves({ color: color, table: table, enPassantSquare: enPassantSquare });
       let numberOfCombinations = 0;
       const oppositeColor = color === Color.black ? Color.white : Color.black;
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       if (allLegalMoves?.length)
         for (let i = 0; i < allLegalMoves?.length; i++) {
           const piece = table[allLegalMoves[i].initialSquare];
