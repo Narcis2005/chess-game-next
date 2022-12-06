@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createSquare } from "../../utils/constants";
-import { checkIfCheck, createFENFromTable, getAllLegalMoves, makeTableFromFEN } from "../../utils/generalFunctions";
-import { Color, ITableState } from "../../utils/interfaces";
+import { createSquare } from "./constants";
+import { checkIfCheck, createFENFromTable, getAllLegalMoves, makeTableFromFEN } from "./generalFunctions";
+import { Color, ITableState } from "./interfaces";
 type TGameState = "playing" | "checkmate" | "draw";
-
 export const useSetGameState = (turn: Color) => {
   const [gameState, setGameState] = useState<TGameState>("playing");
 

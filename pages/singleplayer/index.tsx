@@ -8,7 +8,7 @@ import { Color, ITableState, Piece } from "../../utils/interfaces";
 import File from "../../components/File";
 import HomeButtonImage from "../../assets/home-button-svgrepo-com.svg";
 import Link from "next/link";
-import { useSetCheckAndFENHistory, useSetGameState, useSetPositionFromHistory } from "./hooks";
+import { useSetCheckAndFENHistory, useSetGameState, useSetPositionFromHistory } from "../../utils/hooks";
 import {
   containerFunctionChangeTurn,
   containerFunctionHandlePromotingPiece,
