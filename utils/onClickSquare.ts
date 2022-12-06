@@ -64,7 +64,6 @@ const onClickSquare = ({
   console.log(createFENFromTable(table, turn, enPassantSquare, halfMoves, fullMoves));
 
   setSelectedPiece(square);
-
   if (square[squareName].type === Piece.pawn && square[squareName].color === turn) {
     const moves = getPawnMoves({
       table,

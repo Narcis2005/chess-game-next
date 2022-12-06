@@ -80,6 +80,7 @@ export const getAllAttackingMoves = ({ color, table, enPassantSquare }: IGetAllA
       }
     }
   }
+
   return allAttackingMoves;
 };
 const getKingSquare = ({ table, color }: { table: ITableState; color: Color }) => {

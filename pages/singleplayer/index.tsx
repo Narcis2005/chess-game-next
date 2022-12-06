@@ -1,37 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextPage } from "next";
 import Image from "next/image";
-import React, { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import Square from "../../components/Square";
-import { createSquare, FILE_LETTER, InitialTableState } from "../../utils/constants";
-import { Color, IMove, ITableState, Piece } from "../../utils/interfaces";
+import { FILE_LETTER, InitialTableState } from "../../utils/constants";
+import { Color, ITableState, Piece } from "../../utils/interfaces";
 import File from "../../components/File";
 import HomeButtonImage from "../../assets/home-button-svgrepo-com.svg";
 import Link from "next/link";
 import { useSetCheckAndFENHistory, useSetGameState, useSetPositionFromHistory } from "./hooks";
+import {
+  containerFunctionChangeTurn,
+  containerFunctionHandlePromotingPiece,
+  containerFunctionHighlightAttackingSquares,
+  containerFunctionHighlightCastlingSquare,
+  containerFunctionHighlightEnPassantSquare,
+  containerFunctionHighlightSquares,
+  containerFunctionMovePieceToSquare,
+  containerFunctionRemovePieceFromSquare,
+  containerFunctionShowNextPosition,
+  containerFunctionShowPreviousPosition,
+  containerFunctionUnhighlightAllSquares,
+} from "../../utils/tableStateFunctions";
 type TEnPassant = string | null;
-// const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const containerFunctionHighlightSquares = (table: ITableState, setTableState: Dispatch<SetStateAction<ITableState>>) => {
-  const highlightSquares = (squares: IMove[] | null) => {
-    if (squares === null) return;
-    const highlitedSquares: ITableState = {};
-    for (const i of squares) {
-      highlitedSquares[i.targetSquare] = { ...table[i.targetSquare], isHighlighted: true };
-    }
-    setTableState((oldState) => {
-      return { ...oldState, ...highlitedSquares };
-    });
-  };
-  return highlightSquares;
-};
+
 const Singleplayer: NextPage = () => {
   const [tableState, setTableState] = useState<ITableState>(InitialTableState);
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
   const setGameState = useSetGameState(turn);
   const enPassantSquare = useRef<TEnPassant>(null);
+  const [promotingSquare, setPromotingSquare] = useState<string | null>("");
+  const setEnPassantSquare = useCallback((square: string | null) => {
+    enPassantSquare.current = square;
+  }, []);
 
-  const highlightSquares = containerFunctionHighlightSquares(tableState, setTableState);
   const {
     FENHistory,
     FENHistoryIndex,
@@ -45,115 +48,28 @@ const Singleplayer: NextPage = () => {
     resetHalfMoves,
   } = useSetCheckAndFENHistory(tableState, turn, enPassantSquare.current, setGameState);
 
-  const [promotingSquare, setPromotingSquare] = useState<string | null>("");
-
-  const setEnPassantSquare = useCallback((square: string | null) => {
-    enPassantSquare.current = square;
-  }, []);
-
   useSetPositionFromHistory(setTableState, setEnPassantSquare, setTurn, setHalfMoves, setFullMoves, FENHistory, FENHistoryIndex);
-  const highlightAttackingSquares = (squares: IMove[] | null) => {
-    if (squares === null) return;
-    const attackHighlitedSquares: ITableState = {};
-    for (const i of squares) {
-      attackHighlitedSquares[i.targetSquare] = { ...tableState[i.targetSquare], isAttacked: true };
-    }
-    setTableState((oldTable) => {
-      return { ...oldTable, ...attackHighlitedSquares };
-    });
-  };
+
+  const highlightSquares = containerFunctionHighlightSquares(tableState, setTableState);
+  const highlightAttackingSquares = containerFunctionHighlightAttackingSquares(tableState, setTableState);
+  const unHilightAllSquares = containerFunctionUnhighlightAllSquares(tableState, setTableState);
+  const movePieceToSquare = containerFunctionMovePieceToSquare(setTableState, selectedPiece);
+  const highlightCastlingSquare = containerFunctionHighlightCastlingSquare(tableState, setTableState);
+  const highlightEnPassantSquare = containerFunctionHighlightEnPassantSquare(tableState, setTableState);
+  const removePieceFromSquare = containerFunctionRemovePieceFromSquare(setTableState);
+  const handlePromotingPiece = containerFunctionHandlePromotingPiece(turn, promotingSquare, setTableState, setPromotingSquare);
+  const changeTurn = containerFunctionChangeTurn(setTurn);
+  const showPreviousPosition = containerFunctionShowPreviousPosition(FENHistoryIndex, setFENHistoryIndex);
+  const showNextPosition = containerFunctionShowNextPosition(FENHistoryIndex, setFENHistoryIndex, FENHistory.length);
 
   const functionSetSelectedPiece = (square: ITableState) => {
     setSelectedPiece(square);
   };
 
-  const unHilightAllSquares = () => {
-    const newState: ITableState = {};
-    for (const i in tableState) {
-      newState[i] = {
-        ...tableState[i],
-        isHighlighted: false,
-        isAttacked: false,
-        isKingCastlingSquare: false,
-        isQueenCastlingSquare: false,
-        isEnPassantMovingSquare: false,
-      };
-    }
-    setTableState(newState);
-  };
-
-  const movePieceToSquare = (square: string, pieceToMove?: ITableState) => {
-    const piece = pieceToMove ? pieceToMove : selectedPiece;
-    const emptySquare = {
-      [Object.keys(piece)[0]]: createSquare({ color: null, type: null }),
-    };
-    const newSquare = {
-      [square]: {
-        ...piece[Object.keys(piece)[0]],
-        hasMoved: true,
-      },
-    };
-    setTableState((oldState) => {
-      return { ...oldState, ...emptySquare, ...newSquare };
-    });
-  };
-  const changeTurn = () => {
-    setTurn((oldTurn) => {
-      return oldTurn === Color.black ? Color.white : Color.black;
-    });
-  };
-  const highlightCastlingSquare = (square: string, king: boolean) => {
-    const castlingSquares: ITableState = {};
-    if (king) castlingSquares[square] = { ...tableState[square], isKingCastlingSquare: true };
-    else castlingSquares[square] = { ...tableState[square], isQueenCastlingSquare: true };
-
-    setTableState((oldTable) => {
-      return { ...oldTable, ...castlingSquares };
-    });
-  };
-
-  const highlightEnPassantSquare = (squares: IMove[]) => {
-    const castlingSquares: ITableState = {};
-    for (const i of squares) {
-      castlingSquares[i.targetSquare] = { ...tableState[i.targetSquare], isEnPassantMovingSquare: true };
-    }
-    setTableState((oldTable) => {
-      return { ...oldTable, ...castlingSquares };
-    });
-  };
-  const removePieceFromSquare = (square: string) => {
-    const emptySquare = {
-      [square]: createSquare({ color: null, type: null }),
-    };
-    setTableState((oldState) => {
-      return { ...oldState, ...emptySquare };
-    });
-  };
-
   const setPromotingSquareFunction = (square: string | null) => {
     setPromotingSquare(square);
   };
-  const handlePromotingPiece = (e: React.MouseEvent, piece: Piece) => {
-    e.preventDefault();
-    const oppositeColor = turn === Color.black ? Color.white : Color.black;
-    const newPiece = createSquare({ type: piece, color: oppositeColor, hasMoved: true });
-    if (promotingSquare)
-      setTableState((prevState) => {
-        return { ...prevState, [promotingSquare]: { ...newPiece } };
-      });
-    setPromotingSquare("");
-  };
 
-  const showPreviousPosition = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (FENHistoryIndex <= 0) return;
-    setFENHistoryIndex((prevFENHistoryIndex) => prevFENHistoryIndex - 1);
-  };
-  const showNextPosition = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (FENHistoryIndex >= FENHistory.length - 1) return;
-    setFENHistoryIndex((prevFENHistoryIndex) => prevFENHistoryIndex + 1);
-  };
   return (
     <>
       <div className="container">
@@ -203,7 +119,6 @@ const Singleplayer: NextPage = () => {
                         halfMoves: halfMoves,
                         fullMoves: fullMoves,
                         setPromotingSquareFunction,
-                        // addFENToHistory,
                         isNewestPosition: FENHistory.length - 1 === FENHistoryIndex,
                       }}
                     >
