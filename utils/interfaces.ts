@@ -59,11 +59,8 @@ export interface IOnClickSquare {
   increaseHalfMoves: () => void;
   increaseFullMoves: () => void;
   resetHalfMoves: () => void;
-  halfMoves: number;
-  fullMoves: number;
   setPromotingSquareFunction: (square: string | null) => void;
   isNewestPosition: boolean;
-  // addFENToHistory: (FEN: string) => void;
 }
 export interface IGetAllAttackingMoves {
   color: Color;

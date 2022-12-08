@@ -1,6 +1,6 @@
 import { getBishopAttackingMoves, getBishopMoves } from "./Bishop";
 import { FILE_LETTER } from "./constants";
-import { createFENFromTable, handleMovePieceToSquareWhenHighlighted } from "./generalFunctions";
+import { handleMovePieceToSquareWhenHighlighted } from "./generalFunctions";
 import { Color, FileNumber, IOnClickSquare, Piece } from "./interfaces";
 import { getKingAttackingMoves, getKingMoves } from "./KIng";
 import { getKnightAttackingMoves, getKnightMoves } from "./Knight";
@@ -27,8 +27,6 @@ const onClickSquare = ({
   increaseFullMoves,
   increaseHalfMoves,
   resetHalfMoves,
-  halfMoves,
-  fullMoves,
   setPromotingSquareFunction,
   isNewestPosition,
 }: IOnClickSquare) => {
@@ -61,7 +59,6 @@ const onClickSquare = ({
   if (hasPieceMoved) {
     return;
   }
-  console.log(createFENFromTable(table, turn, enPassantSquare, halfMoves, fullMoves));
 
   setSelectedPiece(square);
   if (square[squareName].type === Piece.pawn && square[squareName].color === turn) {
