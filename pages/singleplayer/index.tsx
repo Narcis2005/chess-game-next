@@ -22,6 +22,7 @@ import {
   containerFunctionShowPreviousPosition,
   containerFunctionUnhighlightAllSquares,
 } from "../../utils/tableStateFunctions";
+import { createFENFromTable } from "../../utils/generalFunctions";
 type TEnPassant = string | null;
 
 const Singleplayer: NextPage = () => {
@@ -31,6 +32,8 @@ const Singleplayer: NextPage = () => {
   const setGameState = useSetGameState(turn);
   const enPassantSquare = useRef<TEnPassant>(null);
   const [promotingSquare, setPromotingSquare] = useState<string | null>("");
+  const [buttonFEN, setButtonFEN] = useState("");
+  const [isTableRotated, setIsTableRotated] = useState(false);
   const setEnPassantSquare = useCallback((square: string | null) => {
     enPassantSquare.current = square;
   }, []);
@@ -70,6 +73,26 @@ const Singleplayer: NextPage = () => {
     setPromotingSquare(square);
   };
 
+  const copyFENToClipboard = async () => {
+    const FEN = createFENFromTable(tableState, turn, enPassantSquare.current, halfMoves, fullMoves);
+    setButtonFEN(FEN);
+    await navigator.clipboard.writeText(FEN);
+    setTimeout(() => {
+      setButtonFEN("");
+    }, 10000);
+  };
+  const closeFENContainer = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setButtonFEN("");
+  };
+  const setCurrentPosition = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setFENHistoryIndex(FENHistory.length - 1);
+  };
+  const rotateBoard = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsTableRotated((prevState) => !prevState);
+  };
   return (
     <>
       <div className="container">
@@ -80,7 +103,7 @@ const Singleplayer: NextPage = () => {
             </button>
           </Link>
         </div>
-        <div className="table">
+        <div className={`table ${isTableRotated ? "rotated" : ""}`}>
           {FILE_LETTER.map((letter, fileIndex) => {
             return (
               <File key={letter}>
@@ -97,6 +120,7 @@ const Singleplayer: NextPage = () => {
                         tableState[letter + (8 - squareIndex)].isKingCastlingSquare ||
                         tableState[letter + (8 - squareIndex)].isQueenCastlingSquare
                       }
+                      isRotated={isTableRotated}
                       onClickSquareProps={{
                         movePieceToSquare: movePieceToSquare,
                         square: { [letter + (8 - squareIndex)]: tableState[letter + (8 - squareIndex)] },
@@ -133,10 +157,25 @@ const Singleplayer: NextPage = () => {
           })}
         </div>
         <div className="table-buttons">
+          <button onClick={rotateBoard}>Rotate board</button>
           <button onClick={showPreviousPosition}>Before</button>
           <button onClick={showNextPosition}>After</button>
+          <button onClick={copyFENToClipboard}>Get FEN</button>
+          {FENHistoryIndex !== FENHistory.length - 1 && <button onClick={setCurrentPosition}>Current position</button>}
         </div>
+        {buttonFEN !== "" && (
+          <div className="full-screen-overlay">
+            <div className="fen-container">
+              <div>
+                <p>Copied to clipboard</p>
+                <p>{buttonFEN}</p>
+              </div>
+              <button onClick={closeFENContainer}>X</button>
+            </div>
+          </div>
+        )}
       </div>
+
       {promotingSquare !== "" && (
         <div className="full-screen-overlay">
           <div className="promoting-pieces-container">
