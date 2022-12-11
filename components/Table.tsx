@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FILE_LETTER } from "../utils/constants";
 import { createFENFromTable } from "../utils/generalFunctions";
 import { Color, ITableState } from "../utils/interfaces";
@@ -12,7 +12,6 @@ import {
   containerFunctionHighlightCastlingSquare,
   containerFunctionHighlightEnPassantSquare,
   containerFunctionHighlightSquares,
-  containerFunctionMovePieceToSquare,
   containerFunctionRemovePieceFromSquare,
   containerFunctionUnhighlightAllSquares,
 } from "../utils/tableStateFunctions";
@@ -36,6 +35,9 @@ interface ITableComponent {
   setEnPassantSquare: (square: string | null) => void;
   FENHistoryIndex: number;
   setTableState: Dispatch<SetStateAction<ITableState>>;
+  movePieceToSquare: (square: string, pieceToMove?: ITableState) => void;
+  isTableRotatedProps?: boolean;
+  colorState?: Color;
 }
 const TableComponent = ({
   tableState,
@@ -56,9 +58,14 @@ const TableComponent = ({
   setEnPassantSquare,
   FENHistoryIndex,
   setTableState,
+  movePieceToSquare,
+  colorState,
 }: ITableComponent) => {
   const [buttonFEN, setButtonFEN] = useState("");
-  const [isTableRotated, setIsTableRotated] = useState(false);
+  const [isTableRotated, setIsTableRotated] = useState<boolean>(colorState === turn);
+  useEffect(() => {
+    setIsTableRotated(colorState === Color.black);
+  }, [colorState]);
   const copyFENToClipboard = async () => {
     const FEN = createFENFromTable(tableState, turn, enPassantSquare, halfMoves, fullMoves);
     setButtonFEN(FEN);
@@ -78,14 +85,17 @@ const TableComponent = ({
   };
   const rotateBoard = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsTableRotated((prevState) => !prevState);
+    setIsTableRotated((prevState) => {
+      if (!prevState) {
+        return true;
+      } else return false;
+    });
   };
   const showPreviousPosition = containerFunctionShowPreviousPosition(FENHistoryIndex, setFENHistoryIndex);
   const showNextPosition = containerFunctionShowNextPosition(FENHistoryIndex, setFENHistoryIndex, FENHistory.length);
   const highlightSquares = containerFunctionHighlightSquares(tableState, setTableState);
   const highlightAttackingSquares = containerFunctionHighlightAttackingSquares(tableState, setTableState);
   const unHilightAllSquares = containerFunctionUnhighlightAllSquares(tableState, setTableState);
-  const movePieceToSquare = containerFunctionMovePieceToSquare(setTableState, selectedPiece);
   const highlightCastlingSquare = containerFunctionHighlightCastlingSquare(tableState, setTableState);
   const highlightEnPassantSquare = containerFunctionHighlightEnPassantSquare(tableState, setTableState);
   const removePieceFromSquare = containerFunctionRemovePieceFromSquare(setTableState);

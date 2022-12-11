@@ -63,7 +63,8 @@ export const useSetCheckAndFENHistory = (
       setFENHistoryIndex((lastFENIndex) => lastFENIndex + 1);
     };
     const currentFEN = createFENFromTable(tableState, turn, enPassantSquare, halfMoves.current, fullMoves.current);
-    if (FENHistory.current[FENHistoryIndex].split(" ")[0] !== currentFEN.split(" ")[0]) addFENToHistory(currentFEN);
+    if (FENHistory.current[FENHistoryIndex] && FENHistory.current[FENHistoryIndex].split(" ")[0] !== currentFEN.split(" ")[0])
+      addFENToHistory(currentFEN);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enPassantSquare, setGameState, tableState, turn]);
 
@@ -85,7 +86,6 @@ export const useSetCheckAndFENHistory = (
 export const useSetPositionFromHistory = (
   setTableState: (state: ITableState) => void,
   setEnPassantSquare: (square: string | null) => void,
-  setTurn: (turn: Color) => void,
   setHalfMoves: (n: number) => void,
   setFullMoves: (n: number) => void,
   FENHistory: string[],
@@ -96,8 +96,6 @@ export const useSetPositionFromHistory = (
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [tablePositions, turn, castlingRights, enPassant, halfMovesFromFEN, fullMovesFromFEN] = FEN.split(" ");
       setTableState(makeTableFromFEN(FEN));
-      if (turn === "b") setTurn(Color.black);
-      else setTurn(Color.white);
       if (enPassant === "-") setEnPassantSquare(null);
       else setEnPassantSquare(enPassant);
       setHalfMoves(Number(halfMovesFromFEN));
@@ -105,7 +103,7 @@ export const useSetPositionFromHistory = (
     };
 
     initializePositionFromFEN(FENHistory[FENHistoryIndex]);
-  }, [FENHistory, FENHistoryIndex, setEnPassantSquare, setFullMoves, setHalfMoves, setTableState, setTurn]);
+  }, [FENHistory, FENHistoryIndex, setEnPassantSquare, setFullMoves, setHalfMoves, setTableState]);
 };
 
 export const useCheckAllMoves = (tableState: ITableState, enPassantSquare: string) => {

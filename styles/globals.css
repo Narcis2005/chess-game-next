@@ -263,6 +263,7 @@ img {
   letter-spacing: 2px;
   border-radius: 10px;
   cursor: pointer;
+  margin-bottom: 25px;
 }
 .homepage-nav button:hover {
   background-color: rgb(60, 60, 60);
@@ -274,4 +275,100 @@ img {
   letter-spacing: 3px;
   font-weight: bold;
   text-transform: uppercase;
+}
+.bot-level-container {
+  height: 200px;
+}
+.bot-level-container button {
+  width: 110px;
+  height: 110px;
+  font-size: 1.4rem;
+  color: white;
+  background-color: rgba(40, 40, 40, 1);
+  margin: 0 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 20px;
+}
+.bot-level-container button:hover {
+  background-color: rgba(30, 30, 30, 1);
+}
+.bot-container {
+  flex-direction: column;
+  color: white;
+  font-size: 3rem;
+  background-color: rgba(60, 60, 60, 1);
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  z-index: 999;
+  padding: 30px 0;
+  transform: translate(-50%, -50%);
+}
+.bot-section-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  /* background-color: rgba(0, 0, 0, 0.45); */
+}
+.bot-section-container:nth-child(2) {
+  margin-bottom: 3rem;
+}
+.bot-section-container p {
+  padding-bottom: 20px;
+}
+.choose-color-form [type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* IMAGE STYLES */
+.choose-color-form [type="radio"] + img {
+  cursor: pointer;
+}
+
+/* CHECKED STYLES */
+.choose-color-form [type="radio"]:checked + img {
+  outline: solid 10px black;
+  border-radius: 20px;
+}
+
+.choose-color-form {
+  display: flex;
+  text-align: center;
+}
+.choose-color-form p {
+  font-size: 2rem;
+}
+.choose-color-form label {
+  width: 250px;
+  height: 250px;
+}
+.choose-color-form label:nth-child(1) img {
+  width: 150px;
+  height: 150px;
+  margin: 25px 0;
+}
+
+.choose-color-form label:nth-child(3) img {
+  width: 150px;
+  height: 150px;
+  margin: 25px 0;
+}
+.bot-container .exit {
+  position: absolute;
+  right: 40px;
+  top: 20px;
+  background-color: transparent;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  border: solid 5px white;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
 }
