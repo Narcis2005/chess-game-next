@@ -13,7 +13,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "^0.31.2",
-    "stockfish-native": "^0.3.0"
+    "stockfish-native": "github:Narcis2005/stockfish-native"
   },
   "devDependencies": {
     "@types/node": "18.11.9",
