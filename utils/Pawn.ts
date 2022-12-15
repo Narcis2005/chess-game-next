@@ -152,7 +152,7 @@ export const getPawnMoves = ({ table, file, row, turnCoeficient, squareName, col
 
   // If pawn moved from initial position, it can only move one square
   if (!PAWN_STARTING_POSITIONS.includes(squareName)) {
-    if (table[firstFrontSquare].type === null) {
+    if (table[firstFrontSquare] && table[firstFrontSquare]?.type === null) {
       if (
         !willBeCheck({
           table: table,

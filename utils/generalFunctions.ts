@@ -360,7 +360,53 @@ export const createFENFromTable = (
   FEN += fullMoves;
   return FEN;
 };
+export const makeKingCastlingMove = (
+  movePieceToSquare: (square: string, piece?: ITableState) => void,
+  squareName: string,
+  initialX: number,
+  initialY: number,
+  table: ITableState,
+  turn: Color,
+) => {
+  console.log("king", squareName, initialX, initialY, FILE_LETTER[initialX] + initialY, table[FILE_LETTER[initialX] + initialY], table);
+  if (turn === Color.white) {
+    movePieceToSquare(squareName, { e1: table["e1"] });
+  } else {
+    movePieceToSquare(squareName, { e8: table["e8"] });
+  }
+  // move the king to the castling square
+  movePieceToSquare(FILE_LETTER[initialX - 2] + initialY, {
+    [FILE_LETTER[initialX] + initialY]: table[FILE_LETTER[initialX] + initialY], // move the rook to the left of the king
+  });
+};
 
+export const makeQueenCastlingMove = (
+  movePieceToSquare: (square: string, piece?: ITableState) => void,
+  squareName: string,
+  initialX: number,
+  initialY: number,
+  table: ITableState,
+  turn: Color,
+) => {
+  console.log(
+    "queen",
+    squareName,
+    initialX,
+    initialY,
+    FILE_LETTER[initialX - 3] + initialY,
+    table[FILE_LETTER[initialX - 3] + initialY],
+    table,
+  );
+
+  if (turn === Color.white) {
+    movePieceToSquare(squareName, { e1: table["e1"] });
+  } else {
+    movePieceToSquare(squareName, { e8: table["e8"] });
+  } // move the king to the castling square
+  movePieceToSquare(FILE_LETTER[initialX] + initialY, {
+    [FILE_LETTER[initialX - 3] + initialY]: table[FILE_LETTER[initialX - 3] + initialY], // move the rook to the left of the king
+  });
+};
 export const handleMovePieceToSquareWhenHighlighted = ({
   movePieceToSquare,
   square,
@@ -407,18 +453,13 @@ export const handleMovePieceToSquareWhenHighlighted = ({
   }
 
   if (square[squareName].isKingCastlingSquare) {
-    movePieceToSquare(squareName); // move the king to the castling square
-    movePieceToSquare(FILE_LETTER[initialX - 2] + initialY, {
-      [FILE_LETTER[initialX] + initialY]: table[FILE_LETTER[initialX] + initialY], // move the rook to the left of the king
-    });
+    makeKingCastlingMove(movePieceToSquare, squareName, initialX, initialY, table, turn);
     changeTurn();
     return true;
   }
   if (square[squareName].isQueenCastlingSquare) {
-    movePieceToSquare(squareName); // move the king to the castling square
-    movePieceToSquare(FILE_LETTER[initialX] + initialY, {
-      [FILE_LETTER[initialX - 3] + initialY]: table[FILE_LETTER[initialX - 3] + initialY], // move the rook to the left of the king
-    });
+    console.log("queen", squareName, initialX, initialY);
+    makeQueenCastlingMove(movePieceToSquare, squareName, initialX, initialY, table, turn);
     changeTurn();
     return true;
   }
