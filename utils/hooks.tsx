@@ -24,9 +24,10 @@ export const useSetCheckAndFENHistory = (
   turn: Color,
   enPassantSquare: string | null,
   setGameState: (state: TGameState) => void,
+  initialFEN: string,
 ) => {
   const isCheck = useRef(false);
-  const FENHistory = useRef<string[]>(["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]);
+  const FENHistory = useRef<string[]>([initialFEN]);
   const [FENHistoryIndex, setFENHistoryIndex] = useState(0);
   const fullMoves = useRef(1);
   const halfMoves = useRef(0);

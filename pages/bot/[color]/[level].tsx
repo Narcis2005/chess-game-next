@@ -2,7 +2,7 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { InitialTableState } from "../../../utils/constants";
+import { BLACK_PAWNS_PROMOTING_POSITIONS, createSquare, INITIAL_FEN, WHITE_PAWNS_PROMOTING_POSITIONS } from "../../../utils/constants";
 import { Color, ITableState, Piece } from "../../../utils/interfaces";
 import HomeButtonImage from "../../../assets/home-button-svgrepo-com.svg";
 import Link from "next/link";
@@ -15,12 +15,11 @@ import {
 import PromotingOverlay from "../../../components/PromotingOverlay";
 import Table from "../../../components/Table";
 import { useRouter } from "next/router";
-import { makeKingCastlingMove, makeQueenCastlingMove } from "../../../utils/generalFunctions";
+import { makeKingCastlingMove, makeQueenCastlingMove, makeTableFromFEN } from "../../../utils/generalFunctions";
 
 type TEnPassant = string | null;
-
 const Bot: NextPage = () => {
-  const [tableState, setTableState] = useState<ITableState>(InitialTableState);
+  const [tableState, setTableState] = useState<ITableState>(makeTableFromFEN(INITIAL_FEN));
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
   const setGameState = useSetGameState(turn);
@@ -67,7 +66,7 @@ const Bot: NextPage = () => {
     setFullMoves,
     setFENHistoryIndex,
     resetHalfMoves,
-  } = useSetCheckAndFENHistory(tableState, turn, enPassantSquare.current, setGameState);
+  } = useSetCheckAndFENHistory(tableState, turn, enPassantSquare.current, setGameState, INITIAL_FEN);
   const changeTurn = containerFunctionChangeTurn(setTurn);
 
   useSetPositionFromHistory(setTableState, setEnPassantSquare, setHalfMoves, setFullMoves, FENHistory, FENHistoryIndex);
@@ -82,7 +81,19 @@ const Bot: NextPage = () => {
       levelState != null
     ) {
       const fetchBestMove = async () => {
-        const res = await fetch("/api/stockfish?position=" + FENHistory[FENHistory.length - 1] + "&level=" + levelState * 2);
+        const buildLink = (level: number, depth = 15) =>
+          `/api/stockfish?position=${FENHistory[FENHistory.length - 1]}&level=${level}&depth=${depth}`;
+        let link = "";
+        if (levelState <= 3) {
+          link = buildLink(levelState * 2, 12);
+        } else if (levelState <= 5) {
+          link = buildLink(levelState * 2, 15);
+        } else if (levelState <= 7) {
+          link = buildLink(levelState * 2, 18);
+        } else if (levelState <= 10) {
+          link = buildLink(levelState * 2, 20);
+        }
+        const res = await fetch(link);
         const data = await res.json();
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         if (data.bestMove) return data.bestMove;
@@ -94,6 +105,7 @@ const Bot: NextPage = () => {
           const piece = tableState[initialSquare];
           //Check for castling
           let isCastlingMove = false;
+          let promotingMove = false;
           if (piece.type === Piece.king) {
             if (initialSquare === "e1" && piece.color === Color.white) {
               if (destinationSquare === "g1") {
@@ -113,14 +125,35 @@ const Bot: NextPage = () => {
               }
             }
           }
-          if (!isCastlingMove) {
-            console.log(isCastlingMove);
+          //handle promoting
+          else if (piece.type === Piece.pawn && data.length === 5) {
+            let promotingPiece = Piece.knight;
+            if (data.slice(4, 5) === "q") {
+              promotingPiece = Piece.queen;
+            } else if (data.slice(4, 5) === "r") {
+              promotingPiece = Piece.rook;
+            } else if (data.slice(4, 5) === "b") {
+              promotingPiece = Piece.bishop;
+            }
+            if (
+              WHITE_PAWNS_PROMOTING_POSITIONS.includes(destinationSquare) ||
+              BLACK_PAWNS_PROMOTING_POSITIONS.includes(destinationSquare)
+            ) {
+              const newPiece = createSquare({ type: promotingPiece, color: turn, hasMoved: true });
+              const emptyOldSquare = createSquare({ type: null, color: null, hasMoved: false });
+              promotingMove = true;
+              setTableState((prevState) => {
+                return { ...prevState, [initialSquare]: { ...emptyOldSquare }, [destinationSquare]: { ...newPiece } };
+              });
+            }
+          }
+
+          if (!isCastlingMove && !promotingMove) {
             movePieceToSquare(destinationSquare, {
               [initialSquare]: { ...piece },
             });
           }
           //Check for en passant
-          //handle promoting
         })
         .catch((err) => {
           console.log(err);

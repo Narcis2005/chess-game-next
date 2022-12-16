@@ -368,7 +368,6 @@ export const makeKingCastlingMove = (
   table: ITableState,
   turn: Color,
 ) => {
-  console.log("king", squareName, initialX, initialY, FILE_LETTER[initialX] + initialY, table[FILE_LETTER[initialX] + initialY], table);
   if (turn === Color.white) {
     movePieceToSquare(squareName, { e1: table["e1"] });
   } else {
@@ -388,16 +387,6 @@ export const makeQueenCastlingMove = (
   table: ITableState,
   turn: Color,
 ) => {
-  console.log(
-    "queen",
-    squareName,
-    initialX,
-    initialY,
-    FILE_LETTER[initialX - 3] + initialY,
-    table[FILE_LETTER[initialX - 3] + initialY],
-    table,
-  );
-
   if (turn === Color.white) {
     movePieceToSquare(squareName, { e1: table["e1"] });
   } else {
@@ -458,7 +447,6 @@ export const handleMovePieceToSquareWhenHighlighted = ({
     return true;
   }
   if (square[squareName].isQueenCastlingSquare) {
-    console.log("queen", squareName, initialX, initialY);
     makeQueenCastlingMove(movePieceToSquare, squareName, initialX, initialY, table, turn);
     changeTurn();
     return true;

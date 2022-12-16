@@ -2,7 +2,6 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import React, { useCallback, useRef, useState } from "react";
-import { InitialTableState } from "../../utils/constants";
 import { Color, ITableState } from "../../utils/interfaces";
 import HomeButtonImage from "../../assets/home-button-svgrepo-com.svg";
 import Link from "next/link";
@@ -14,10 +13,12 @@ import {
 } from "../../utils/tableStateFunctions";
 import PromotingOverlay from "../../components/PromotingOverlay";
 import Table from "../../components/Table";
+import { makeTableFromFEN } from "../../utils/generalFunctions";
+import { INITIAL_FEN } from "../../utils/constants";
 type TEnPassant = string | null;
 
 const Singleplayer: NextPage = () => {
-  const [tableState, setTableState] = useState<ITableState>(InitialTableState);
+  const [tableState, setTableState] = useState<ITableState>(makeTableFromFEN(INITIAL_FEN));
   const [selectedPiece, setSelectedPiece] = useState<ITableState>({});
   const [turn, setTurn] = useState<Color>(Color.white);
   const setGameState = useSetGameState(turn);
@@ -39,7 +40,7 @@ const Singleplayer: NextPage = () => {
     setFullMoves,
     setFENHistoryIndex,
     resetHalfMoves,
-  } = useSetCheckAndFENHistory(tableState, turn, enPassantSquare.current, setGameState);
+  } = useSetCheckAndFENHistory(tableState, turn, enPassantSquare.current, setGameState, INITIAL_FEN);
 
   useSetPositionFromHistory(setTableState, setEnPassantSquare, setHalfMoves, setFullMoves, FENHistory, FENHistoryIndex);
 

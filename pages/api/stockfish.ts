@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     level = "20";
   }
   if (!depth) {
-    depth = "12";
+    depth = "15";
   }
   const engine = new Stockfish("./stockfish", { "Skill Level": Number(level) });
   await engine.position({ start: position });
