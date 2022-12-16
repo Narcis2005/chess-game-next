@@ -1,5 +1,5 @@
 import { FILE_LETTER } from "./constants";
-import { willBeCheck } from "./generalFunctions";
+import { checkIfCheck, willBeCheck } from "./generalFunctions";
 import { Color, FileNumber, IMove, ITableState, Piece } from "./interfaces";
 
 interface IGetKingMoves {
@@ -318,12 +318,9 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
     table[FILE_LETTER[initialX + 2] + initialY]?.color === color && //check if the fourth right square is the right color
     table[FILE_LETTER[initialX + 2] + initialY]?.hasMoved === false && // check if the rook has ever moved
     table[FILE_LETTER[initialX - 1] + initialY]?.hasMoved === false && // check if the king has ever moved
-    !willBeCheck({
+    !checkIfCheck({
       table: table,
       color: color,
-      square: FILE_LETTER[initialX - 1] + initialY,
-      row,
-      file,
       enPassantSquare,
     }) && //check if the king is in check
     !willBeCheck({
@@ -354,12 +351,9 @@ export const getKingMoves = ({ table, file, row, color, enPassantSquare }: IGetK
     table[FILE_LETTER[initialX - 5] + initialY]?.color === color && // check if the rook color is the good color
     table[FILE_LETTER[initialX - 5] + initialY]?.hasMoved === false && // check if the rook has ever moved
     table[FILE_LETTER[initialX - 1] + initialY]?.hasMoved === false && //check if the king has ever moved
-    !willBeCheck({
+    !checkIfCheck({
       table: table,
       color: color,
-      square: FILE_LETTER[initialX - 1] + initialY,
-      row,
-      file,
       enPassantSquare,
     }) && //check if the king is in check
     !willBeCheck({

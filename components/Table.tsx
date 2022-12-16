@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FILE_LETTER } from "../utils/constants";
 import { createFENFromTable } from "../utils/generalFunctions";
-import { Color, ITableState } from "../utils/interfaces";
+import { Color, ITableState, Piece } from "../utils/interfaces";
 import Square from "./Square";
 import File from "./File";
 import Image from "next/image";
@@ -112,7 +112,9 @@ const TableComponent = ({
                     YCoordonate={fileIndex + 1}
                     XCoordonate={squareIndex + 1}
                     isHighlited={tableState[letter + (8 - squareIndex)].isHighlighted}
-                    isAttacked={tableState[letter + (8 - squareIndex)].isAttacked}
+                    isAttacked={
+                      tableState[letter + (8 - squareIndex)].isAttacked && tableState[letter + (8 - squareIndex)].type !== Piece.king
+                    }
                     isEnPassantSquare={tableState[letter + (8 - squareIndex)].isEnPassantMovingSquare}
                     isCastlingSquare={
                       tableState[letter + (8 - squareIndex)].isKingCastlingSquare ||

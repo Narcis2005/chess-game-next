@@ -85,18 +85,28 @@ export const getAllAttackingMoves = ({ color, table, enPassantSquare }: IGetAllA
 };
 const getKingSquare = ({ table, color }: { table: ITableState; color: Color }) => {
   for (const square in table) {
-    if (table[square].type === Piece.king && table[square].color === color) return square;
+    if (table[square].type === Piece.king && table[square].color === color) {
+      console.log(square);
+      return square;
+    }
   }
 };
-export const checkIfCheck = ({ table, color, enPassantSquare }: { table: ITableState; color: Color; enPassantSquare: string | null }) => {
+export const checkIfCheck = ({
+  table,
+  color,
+  enPassantSquare,
+}: {
+  table: ITableState;
+  color: Color;
+  enPassantSquare: string | null;
+}): boolean => {
   const allAttackingMoves = getAllAttackingMoves({
     table: table,
     color: color == Color.white ? Color.black : Color.white,
     enPassantSquare,
   });
   const kingSquare = getKingSquare({ table: table, color: color });
-
-  if (!kingSquare) return; //Well, it would be weird for this to happen :||
+  if (!kingSquare) return true; //Well, it would be weird for this to happen :||
   if (allAttackingMoves?.includes(kingSquare)) {
     return true;
   }
@@ -116,7 +126,7 @@ export const willBeCheck = ({
   file: string;
   enPassantSquare: string | null;
   row: number;
-}) => {
+}): boolean => {
   const oldSquare = {
     [`${file}${row}`]: createSquare({
       type: null,
