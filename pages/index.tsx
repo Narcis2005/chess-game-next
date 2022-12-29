@@ -21,7 +21,7 @@ const Home: NextPage = () => {
         <nav className="homepage-nav">
           <li>
             <Link href="singleplayer" passHref>
-              <button>Singleplayer</button>
+              <button>Offline</button>
             </Link>
             <button onClick={handleBotButtonClick}>Bot</button>
           </li>

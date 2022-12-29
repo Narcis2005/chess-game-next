@@ -86,7 +86,6 @@ export const getAllAttackingMoves = ({ color, table, enPassantSquare }: IGetAllA
 const getKingSquare = ({ table, color }: { table: ITableState; color: Color }) => {
   for (const square in table) {
     if (table[square].type === Piece.king && table[square].color === color) {
-      console.log(square);
       return square;
     }
   }
